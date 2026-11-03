@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.7 — 2026-11-03
+
+- Top navigation collapsed to one row (chapter pills scroll horizontally); bottom dock collapsed to one row: buttons, step caption and terms side by side, with the term definition floating above the bar instead of growing it.
+- Page header padding reduced so the diagram starts higher.
+
 ## 1.3.6 — 2026-11-03
 
 - Course pages dock the controls, the step caption and the term row to the bottom of the viewport, so they stay visible while scrolling a tall diagram; `assets/course.js` moves the existing blocks into `.dock` and reserves body padding.
