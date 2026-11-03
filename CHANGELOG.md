@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.5 — 2026-11-03
+
+- Visual review removed: screenshot-plus-vision is too slow for the learner. Pre-delivery checks are the SVG collision script plus DOM step assertions only.
+- `check_svg_overlap.py` now scans every `<svg>` block, not just the first.
+
 ## 1.3.4 — 2026-11-03
 
 - Delivery order fixed: edit → open immediately → then run the overlap check, one rendered look and step assertions; fix and reopen silently when a check fails.

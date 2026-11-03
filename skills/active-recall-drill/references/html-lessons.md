@@ -51,8 +51,10 @@ The learner wants to see the new state immediately, and does not want to wait fo
 
 1. **Edit** the page.
 2. **Open it right away** (`open <file>`), before any check runs. One sentence in chat says what changed.
-3. **Then verify**: `python3 scripts/check_svg_overlap.py page.html [--allow l0,...]` (must print `no collisions`), one headless screenshot inspected for text spill and overlaps, and a DOM check of the first and last `?step=N`.
-4. **Fix silently and reopen** if anything failed; report the fix in one line. Do not hold the page back until the checks pass — the learner is reading while the checks run.
+3. **Then verify without looking at pixels**: `python3 scripts/check_svg_overlap.py page.html [--allow l0,...]` (must print `no collisions`) and a DOM check of the first and last `?step=N`.
+4. **Fix silently and reopen** if a check fails; report the fix in one line. Do not hold the page back until the checks pass.
+
+Screenshot-plus-vision review is banned: the learner rejected it twice as too slow. Geometry and DOM checks are the substitutes — keep the collision script current (it scans every `<svg>` block) instead of adding new visual tooling.
 
 ## Opening pages and data on file://
 

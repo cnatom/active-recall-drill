@@ -23,12 +23,13 @@ POINT = re.compile(r'[ML] ([\d.]+) ([\d.]+)')
 
 
 def load(path: Path) -> str:
+    """Return every <svg> block, so pages with several diagrams are all checked."""
     text = path.read_text(encoding="utf-8", errors="ignore")
-    start, end = text.find("<svg"), text.find("</svg>")
-    if start < 0 or end < 0:
+    blocks = re.findall(r"<svg.*?</svg>", text, re.S)
+    if not blocks:
         print("no <svg> block found", file=sys.stderr)
         raise SystemExit(2)
-    return text[start:end]
+    return "\n".join(blocks)
 
 
 def boxes(svg: str) -> list[tuple[float, float, float, float]]:
