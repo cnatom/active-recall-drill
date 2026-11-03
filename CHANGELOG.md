@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.2 — 2026-11-03
+
+- README restructured after comparable skill repos: badge, one-line scope, install, usage, file tree, requirements, notes, license.
+- Install simplified to `npx skills add cnatom/active-recall-drill`; the CLI detects the single skill in the repo.
+
 ## 1.3.1 — 2026-11-03
 
 - README: added the one-line prompt for installing through an agent; trimmed filler sentences in both languages.

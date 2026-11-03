@@ -1,38 +1,33 @@
 # Active Recall Drill
 
-离线间隔重复复习。出题、作答、揭示，然后按 1/3/7/15/30 天排下一次。题库是一个本地 JSON 文件，不联网，不需要第三方包。
+[![skills.sh](https://img.shields.io/badge/skills.sh-cnatom%2Factive--recall--drill-111)](https://www.skills.sh/cnatom/active-recall-drill)
+
+离线间隔重复复习。出题、作答、揭示，按 1/3/7/15/30 天排下一次。题库是一个本地 JSON 文件，不联网。
 
 中文 | [English](README.en.md)
-
-## 功能
-
-- 出题与揭示是两条命令，答案不会跟着题面一起出现。
-- 答对按 1 → 3 → 7 → 15 → 30 天推进，走完再对一次记为已掌握；半对退回一天，答错重置。
-- 命令行与课程页面壳有中英两套，默认跟随系统语言，`--lang` 覆盖。
-- 一条命令生成多章课程页面：课程地图、章节页、共享样式、术语表。
 
 ## 安装
 
 ```sh
-npx skills add cnatom/active-recall-drill --skill active-recall-drill
+npx skills add cnatom/active-recall-drill
 ```
 
 交给智能体执行：
 
 ```text
-安装技能：npx skills add cnatom/active-recall-drill --skill active-recall-drill
+安装技能：npx skills add cnatom/active-recall-drill
 ```
 
-安装要 Node.js；运行只要 Python 3.9+。
+装到 `.agents/skills/`，Claude Code 走软链，其他 agent 直接读该目录。
 
-克隆后用 CLI：
+只用 CLI：
 
 ```sh
 git clone https://github.com/cnatom/active-recall-drill
 python3 active-recall-drill/skills/active-recall-drill/scripts/drill.py --help
 ```
 
-## 使用
+## 用法
 
 ```text
 考我今天该复习的题。
@@ -49,12 +44,22 @@ python3 scripts/drill.py grade 1 --result right
 
 多个题库用 `DRILL_STORE=/path/reviews.json` 分开。
 
-## 文档
+## 内容
 
-- [数据模型](skills/active-recall-drill/references/data-model.md)
-- [课程形态](skills/active-recall-drill/references/course-layout.md)
-- [单页教学页规范](skills/active-recall-drill/references/html-lessons.md)
-- [教学风格](skills/active-recall-drill/references/teaching-style.md)
+```
+skills/active-recall-drill/
+├── SKILL.md              流程、评分、入库规则
+├── scripts/drill.py      排期库与命令行
+├── scripts/i18n.py       中英文案
+├── scripts/new_course.py 多章课程脚手架
+├── scripts/build_*.py    入口页、术语表、术语数据
+├── references/           数据模型、课程形态、页面规范、教学风格
+└── templates/            单页与整门课的 HTML 模板
+```
+
+## 要求
+
+安装要 Node.js；运行只要 Python 3.9+，无第三方包。
 
 ## 须知
 

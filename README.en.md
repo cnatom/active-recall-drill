@@ -1,31 +1,26 @@
 # Active Recall Drill
 
-Offline spaced repetition: ask, answer, reveal, then schedule the next review at 1, 3, 7, 15 and 30 days. The store is one local JSON file — no network, no third-party packages.
+[![skills.sh](https://img.shields.io/badge/skills.sh-cnatom%2Factive--recall--drill-111)](https://www.skills.sh/cnatom/active-recall-drill)
+
+Offline spaced repetition: ask, answer, reveal, schedule the next review at 1, 3, 7, 15 and 30 days. The store is one local JSON file; no network.
 
 [中文](README.md) | English
-
-## Features
-
-- Question and answer are separate commands, so the answer never appears with the prompt.
-- 1 → 3 → 7 → 15 → 30 days on correct answers; mastered after one more pass; partial backs off a day, wrong resets.
-- CLI and course page shell in English and Chinese, following the system locale, overridable with `--lang`.
-- One command scaffolds a multi-chapter course: map, chapter pages, shared stylesheet, glossary.
 
 ## Install
 
 ```sh
-npx skills add cnatom/active-recall-drill --skill active-recall-drill
+npx skills add cnatom/active-recall-drill
 ```
 
 Ask your agent to run it:
 
 ```text
-Install the skill: npx skills add cnatom/active-recall-drill --skill active-recall-drill
+Install the skill: npx skills add cnatom/active-recall-drill
 ```
 
-Install needs Node.js; running needs Python 3.9+.
+Installs into `.agents/skills/`; Claude Code gets a symlink, other agents read the directory directly.
 
-Clone and use the CLI:
+CLI only:
 
 ```sh
 git clone https://github.com/cnatom/active-recall-drill
@@ -49,12 +44,22 @@ python3 scripts/drill.py grade 1 --result right
 
 Keep separate stores with `DRILL_STORE=/path/reviews.json`.
 
-## Docs
+## Contents
 
-- [Data model](skills/active-recall-drill/references/data-model.md)
-- [Course layout](skills/active-recall-drill/references/course-layout.md)
-- [Lesson pages](skills/active-recall-drill/references/html-lessons.md)
-- [Teaching style](skills/active-recall-drill/references/teaching-style.md)
+```
+skills/active-recall-drill/
+├── SKILL.md              workflow, grading, item rules
+├── scripts/drill.py      store and CLI
+├── scripts/i18n.py       English and Chinese messages
+├── scripts/new_course.py multi-chapter course scaffolder
+├── scripts/build_*.py    index, glossary and terms-data builders
+├── references/           data model, course layout, lesson pages, teaching style
+└── templates/            single-page and full-course HTML skeletons
+```
+
+## Requirements
+
+Node.js for the install command; Python 3.9+ to run, no third-party packages.
 
 ## Notes
 
