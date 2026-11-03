@@ -1,7 +1,7 @@
 ---
 name: active-recall-drill
 description: Quiz learned material with spaced repetition and recall.
-version: 1.3.8
+version: 1.3.9
 author: cnatom, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]

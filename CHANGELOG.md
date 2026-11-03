@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.9 — 2026-11-03
+
+- Step caption restyled: 17.5 px semibold on a tinted band with an accent left border, so it no longer reads like body copy.
+
 ## 1.3.8 — 2026-11-03
 
 - Step caption moved above the diagram (part of the figure); only buttons and terms remain in the bottom dock.
