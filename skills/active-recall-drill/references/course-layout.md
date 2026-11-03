@@ -33,6 +33,32 @@ Add `--lang zh|en` to pin the page language; otherwise it follows the system loc
 - One concept per chapter. A follow-up question patches that chapter with one more picture; only a genuinely new concept becomes a new chapter.
 - Hardware subjects get exactly one physical chapter: racks, device positions, cables per server, uplink speeds, A/B zones. It follows the role chapter and precedes any quiz that asks why a device is duplicated; without it the learner reads every logical page and still cannot answer physical questions.
 
+## Coverage chain (what a complete course contains)
+
+A course that stops at the logical layers leaves holes the learner discovers mid-quiz. Cover the chain below; each item is one chapter, in this order, and skip only what the subject genuinely lacks:
+
+1. roles and where each sits;
+2. physical form: racks, cables per server, uplink counts and speeds, A/B zones;
+3. redundancy: what is paired, how the pair presents as one, what fails over and how fast;
+4. how a service attaches (the two or three supported modes and when each is used);
+5. isolation and multi-tenancy (VRFs, instances, per-tenant routing);
+6. addressing and numbering rules (prefix plan, VLAN classes, unit of allocation);
+7. the real topology with its traffic classes;
+8. the management plane (who installs, who operates, who orchestrates);
+9. operations: failure handling and change handling;
+10. automation and the maturity ladder for both.
+
+Design starts at 5-7 chapters, but a production system ends at 10-15. When a quiz answer is blank, find which link of this chain was never taught and add it in place; do not compress two links into one chapter.
+
+## Reordering or renumbering chapters
+
+Chapter numbers are display values; ids stay stable, so a reorder never renames files.
+
+1. Rewrite the order and `num` values in `assets/course-data.js` (array order drives nav pills, the map and the pager).
+2. In each moved page update `data-num` on the kicker, the `第 N 章` text and the `<title>` prefix — grep the old number to catch all three.
+3. Check for duplicate titles and numbers across chapters; a copy-paste chapter keeps its source's `<h1>` and the map then shows two chapters with the same name.
+4. Open the map and one moved chapter; nav highlight comes from `data-chapter`/`id`, so it must still point at the unchanged id.
+
 ## Fixed page shape
 
 1. Small chapter number, title, one-line lead (what this chapter solves).

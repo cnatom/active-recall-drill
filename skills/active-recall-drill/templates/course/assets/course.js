@@ -60,6 +60,17 @@
       <nav class="pills">${pills}</nav>
       <button class="lang" id="langToggle">${t('switchTo')}</button>
     </div>`;
+    // 鼠标停在章节列表上时，垂直滚轮改为横向滚动
+    const pillsEl = navHost.querySelector('.pills');
+    if (pillsEl) {
+      pillsEl.addEventListener('wheel', e => {
+        if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+        if (pillsEl.scrollWidth <= pillsEl.clientWidth) return;
+        e.preventDefault();
+        pillsEl.scrollLeft += e.deltaY;
+      }, { passive: false });
+    }
+
     const btn = document.getElementById('langToggle');
     if (btn) btn.onclick = () => {
       localStorage.setItem(KEY_LANG, LANG === 'zh' ? 'en' : 'zh');

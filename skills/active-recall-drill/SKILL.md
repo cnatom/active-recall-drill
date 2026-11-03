@@ -1,7 +1,7 @@
 ---
 name: active-recall-drill
 description: Quiz learned material with spaced repetition and recall.
-version: 1.4.0
+version: 1.4.1
 author: cnatom, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -111,7 +111,7 @@ The script creates `index.html` (course map with progress), `ch01.html`…`chNN.
 
 Conventions (details in `references/course-layout.md`):
 
-- Start with 5 to 7 chapters; `00` is always the map. The count is a ceiling on what is taught at once, not a cap on the course: when review shows a whole role chain was never introduced (who installs a virtual network function vs who manages it afterwards), add a chapter in role order instead of a paragraph in chat.
+- Start with 5 to 7 chapters; `00` is always the map. That count is a ceiling on what is taught at once, not a cap on the course: a production system grows to 10-15 chapters along the coverage chain in `references/course-layout.md` (roles → physical → redundancy → how services attach → isolation → addressing/numbering → real topology → management plane → operations → automation). Add in role order instead of explaining the missing link in chat, keep one concept per chapter, and never let two chapters carry the same title after a reorder.
 - For any subject with hardware — networks, servers, data centres — one chapter is physical: racks, which box sits where, how many cables per server, uplink speeds, A/B zones. Logical chapters alone leave "why two NICs, why two switches" unanswerable, and a quiz on device roles then fails even though every logical page was read. Place the physical chapter right after the role chapter and before any device-role quiz.
 - One concept per page. A follow-up question patches the chapter it belongs to; a genuinely new concept becomes a new chapter, not a new page beside the course.
 - Every page: title + one-line lead, the step caption as a plain speech bubble directly above the diagram (white, hairline border, small tail pointing down; 16.5 px, weight 500 — not a tinted band, not body copy), diagram with a fixed side table, one-row dock at the viewport bottom (previous/next/restart, counter, term chips), chapter pager. Both nav and dock stay one row; the body reserves `dock height + 18px`. Full contract and rejected variants: `references/ui-spec.md`.

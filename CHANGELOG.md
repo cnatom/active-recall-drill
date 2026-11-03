@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.1 — 2026-11-03
+
+- Chapter pills convert a vertical mouse wheel into horizontal scrolling while the pointer is over them, so a wheel-only mouse can reach later chapters.
+
 ## 1.4.0 — 2026-11-03
 
 - New `references/ui-spec.md`: the approved shell (nav, step bubble, figure, cards, appendix, dock), exact numbers, and the table of rejected variants with their replacements.
