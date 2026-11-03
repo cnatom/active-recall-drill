@@ -142,8 +142,9 @@
     try { visited = JSON.parse(localStorage.getItem('netcloud-course-progress') || '{}'); } catch (e) {}
     const seen = CHAPTERS.filter(c => c.id !== 'index' && visited[c.id])
       .map(c => `${c.num} ${c.title}`).join('、') || '（还没有记录）';
-    const total = document.getElementById('step');
-    const totalText = total ? total.textContent.split('/').pop().trim() : '';
+    const stepEl = document.getElementById('step');
+    const sm = stepEl && stepEl.textContent.match(/(\d+)\s*步\s*\/\s*共\s*(\d+)\s*步/);
+    const stepText = sm ? `第 ${sm[1]} 步 / 共 ${sm[2]} 步` : (stepEl ? stepEl.textContent.trim() : '未知');
     const now = new Date();
     const stamp = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' +
       String(now.getDate()).padStart(2, '0') + ' ' + String(now.getHours()).padStart(2, '0') + ':' +
@@ -151,7 +152,7 @@
     return [
       '【课程进度】',
       `当前：第 ${cur.num} 章 ${cur.title}（${location.pathname.split('/').pop()}）`,
-      `步骤：${totalText || '未知'}`,
+      `步骤：${stepText}`,
       `已看过：${seen}`,
       `时间：${stamp}`,
     ].join('\n');

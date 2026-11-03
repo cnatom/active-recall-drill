@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.7.1 — 2026-11-03
+
+- Context copy now reports the real position (`第 N 步 / 共 M 步`) instead of only the total.
+- The M-LAG figure redrawn as a clean square: two verticals plus two diagonals, peer-link/DAD between the boxes, escape port as a single L.
+
 ## 1.7.0 — 2026-11-03
 
 - Progress sharing replaced by a `复制上下文` button: copies chapter, file, step, visited chapters and timestamp to the clipboard so the learner can paste it into the chat. No file picker, no daemon.
