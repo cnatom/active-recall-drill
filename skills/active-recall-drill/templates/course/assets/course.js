@@ -112,6 +112,12 @@
     dock.appendChild(inner);
     if (bar) inner.appendChild(bar);
     if (terms) inner.appendChild(terms);
+    // 同步进度：写入用户选的 progress.json（无服务进程）
+    const syncBtn = document.createElement('button');
+    syncBtn.textContent = '同步进度';
+    syncBtn.title = '把当前章节与步骤写入 progress.json';
+    inner.appendChild(syncBtn);
+    syncBtn.addEventListener('click', () => syncProgress());
     document.body.appendChild(dock);
     const pad = () => { document.body.style.paddingBottom = (dock.offsetHeight + 18) + 'px'; };
     pad();
@@ -119,28 +125,86 @@
     window.addEventListener('load', pad);
   })();
 
-  // report chapter + step to the local recorder (silently ignored if it is not running)
-  (function () {
-    const meta = CHAPTERS.find(c => c.id === currentId) || {};
-    function currentStep() {
-      const el = document.getElementById('step');
-      const m = el && el.textContent.match(/\d+/);
-      return m ? Number(m[0]) : 0;
-    }
-    function report() {
-      const payload = { file: location.pathname.split('/').pop(), id: currentId,
-                        num: meta.num, title: meta.title, step: currentStep() };
+
+  // ---- 进度同步（File System Access API，无后台进程）----
+  function currentChapterMeta() {
+    const c = CHAPTERS.find(x => x.id === (document.body.dataset.chapter || 'index')) || {};
+    const el = document.getElementById('step');
+    const m = el && el.textContent.match(/\d+/);
+    return { id: c.id, num: c.num, title: c.title, step: m ? Number(m[0]) : 0 };
+  }
+
+  function progressPayload() {
+    return {
+      updated: new Date().toISOString(),
+      current: currentChapterMeta(),
+      visited: (() => { try { return JSON.parse(localStorage.getItem('netcloud-course-progress') || '{}'); } catch (e) { return {}; } })(),
+    };
+  }
+
+  function toast(text) {
+    const t = document.createElement('div');
+    t.textContent = text;
+    t.style.cssText = 'position:fixed;left:50%;bottom:70px;transform:translateX(-50%);background:#16181d;color:#fff;font-size:13px;padding:7px 14px;border-radius:8px;z-index:99;opacity:.95';
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 1800);
+  }
+
+  function idb() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open('course-progress', 1);
+      req.onupgradeneeded = () => req.result.createObjectStore('handles');
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+  function idbGet(key) {
+    return idb().then(db => new Promise((res, rej) => {
+      const tx = db.transaction('handles', 'readonly').objectStore('handles').get(key);
+      tx.onsuccess = () => res(tx.result);
+      tx.onerror = () => rej(tx.error);
+    }));
+  }
+  function idbSet(key, val) {
+    return idb().then(db => new Promise((res, rej) => {
+      const tx = db.transaction('handles', 'readwrite').objectStore('handles').put(val, key);
+      tx.onsuccess = () => res();
+      tx.onerror = () => rej(tx.error);
+    }));
+  }
+
+  async function syncProgress() {
+    const json = JSON.stringify(progressPayload(), null, 2);
+    if (window.showSaveFilePicker) {
       try {
-        fetch('http://127.0.0.1:8766/hit', {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload), keepalive: true,
-        }).catch(() => {});
-      } catch (e) {}
+        let handle = await idbGet('progress-file').catch(() => null);
+        if (!handle) {
+          handle = await window.showSaveFilePicker({
+            suggestedName: 'progress.json',
+            types: [{ description: 'JSON', accept: { 'application/json': ['.json'] } }],
+          });
+          await idbSet('progress-file', handle).catch(() => {});
+        }
+        let perm = await handle.queryPermission({ mode: 'readwrite' });
+        if (perm !== 'granted') perm = await handle.requestPermission({ mode: 'readwrite' });
+        if (perm !== 'granted') throw new Error('permission denied');
+        const w = await handle.createWritable();
+        await w.write(json);
+        await w.close();
+        toast('已写入 progress.json');
+        return;
+      } catch (e) {
+        if (e && e.name === 'AbortError') return;
+        // 权限被拒或浏览器不支持时退回下载
+      }
     }
-    report();
-    document.addEventListener('click', report, { capture: true });
-    document.addEventListener('visibilitychange', () => { if (document.hidden) report(); });
-  })();
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
+    a.download = 'progress.json';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    toast('已下载 progress.json');
+  }
 
   // 键盘导航：左右翻步骤，上下翻章节
   document.addEventListener('keydown', e => {

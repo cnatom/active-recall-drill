@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.6.0 — 2026-11-03
+
+- Progress recording replaced by an explicit `同步进度` button using the File System Access API: writes `progress.json` from the page, remembers the file handle, falls back to download. No background daemon.
+- Removed `scripts/progress_server.py` and the POST reporting it required.
+
 ## 1.5.1 — 2026-11-03
 
 - Keyboard navigation: left/right arrows step the figure, up/down arrows move between chapters. Ignored while typing in an input.

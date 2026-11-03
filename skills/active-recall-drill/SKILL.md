@@ -1,7 +1,7 @@
 ---
 name: active-recall-drill
 description: Quiz learned material with spaced repetition and recall.
-version: 1.5.1
+version: 1.6.0
 author: cnatom, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -121,12 +121,12 @@ Conventions (details in `references/course-layout.md`):
 
 ## Knowing which chapter the learner is on
 
-A course opened from `file://` cannot write to disk, so pages POST to a tiny local recorder (`scripts/progress_server.py`) that writes `progress.json` next to the course.
+A course opened from `file://` cannot write to disk by itself, and the learner rejected running a recorder daemon. The mechanism is an explicit sync instead:
 
-- Start it once per session: `python3 scripts/progress_server.py --file <course dir>/progress.json --port 8766` (bind 127.0.0.1 only). Pages report on load, on every click and when the tab is hidden; failures are silent, so the course still works with the server down.
-- Before answering anything about a course, read `<course dir>/progress.json` and open with the chapter the learner was last in (`_last.key`), e.g. "你在第 07 章 两种业务接入". Never claim to watch their screen: this file is the only signal.
-- Do not add a full-screen overlay to capture clicks; it swallows the learner's real clicks. A capture-phase click listener records the same information without blocking anything.
-- The recorder is per course directory and survives tab switching; if `progress.json` is stale or missing, say so and ask instead of guessing.
+- The bottom dock carries a `同步进度` button. It writes `progress.json` (current chapter, step, and the visited map) through the File System Access API; the handle is remembered in IndexedDB, so later clicks only re-confirm permission. Without API support it falls back to downloading `progress.json`.
+- Before answering anything about a course, read `<course dir>/progress.json`. `current` is where the learner was when they last synced; `updated` tells you how stale it is. Say the timestamp if it is old instead of pretending it is live.
+- Never claim to watch the screen: without a sync there is no signal at all, so ask which chapter instead of guessing.
+- Do not reintroduce a background recorder or a full-screen overlay without the learner's explicit request; both were rejected (one leaves a process, the other swallows clicks).
 
 ## After the learner finishes a course
 
