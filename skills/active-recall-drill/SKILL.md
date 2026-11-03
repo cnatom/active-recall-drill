@@ -1,7 +1,7 @@
 ---
 name: active-recall-drill
 description: Quiz learned material with spaced repetition and recall.
-version: 1.4.1
+version: 1.5.0
 author: cnatom, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -118,6 +118,15 @@ Conventions (details in `references/course-layout.md`):
 - Follow-up material produced while answering questions goes into a `.extra` section at the bottom inside `<details>`, never into the main step flow or the chapter list; the chapter sequence stays what it was when the course was designed.
 - All pages share `assets/`; never fork the stylesheet per chapter.
 - Open with `file://` after each edit. No reload polling, no local server. Open first, verify second with `check_svg_overlap.py` plus DOM step checks; never a screenshot-plus-vision pass.
+
+## Knowing which chapter the learner is on
+
+A course opened from `file://` cannot write to disk, so pages POST to a tiny local recorder (`scripts/progress_server.py`) that writes `progress.json` next to the course.
+
+- Start it once per session: `python3 scripts/progress_server.py --file <course dir>/progress.json --port 8766` (bind 127.0.0.1 only). Pages report on load, on every click and when the tab is hidden; failures are silent, so the course still works with the server down.
+- Before answering anything about a course, read `<course dir>/progress.json` and open with the chapter the learner was last in (`_last.key`), e.g. "你在第 07 章 两种业务接入". Never claim to watch their screen: this file is the only signal.
+- Do not add a full-screen overlay to capture clicks; it swallows the learner's real clicks. A capture-phase click listener records the same information without blocking anything.
+- The recorder is per course directory and survives tab switching; if `progress.json` is stale or missing, say so and ask instead of guessing.
 
 ## After the learner finishes a course
 

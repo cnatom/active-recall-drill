@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.0 — 2026-11-03
+
+- New `scripts/progress_server.py`: a 127.0.0.1 recorder that pages POST to, so the agent can read which chapter and step the learner is on (`progress.json`).
+- Course pages report on load, click and tab hide; failures are silent and the course works without the server.
+- Documented that a full-screen overlay must not be used for this: a capture-phase listener records clicks without swallowing them.
+
 ## 1.4.1 — 2026-11-03
 
 - Chapter pills convert a vertical mouse wheel into horizontal scrolling while the pointer is over them, so a wheel-only mouse can reach later chapters.

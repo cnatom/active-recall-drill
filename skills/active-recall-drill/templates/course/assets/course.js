@@ -119,6 +119,29 @@
     window.addEventListener('load', pad);
   })();
 
+  // report chapter + step to the local recorder (silently ignored if it is not running)
+  (function () {
+    const meta = CHAPTERS.find(c => c.id === currentId) || {};
+    function currentStep() {
+      const el = document.getElementById('step');
+      const m = el && el.textContent.match(/\d+/);
+      return m ? Number(m[0]) : 0;
+    }
+    function report() {
+      const payload = { file: location.pathname.split('/').pop(), id: currentId,
+                        num: meta.num, title: meta.title, step: currentStep() };
+      try {
+        fetch('http://127.0.0.1:8766/hit', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload), keepalive: true,
+        }).catch(() => {});
+      } catch (e) {}
+    }
+    report();
+    document.addEventListener('click', report, { capture: true });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) report(); });
+  })();
+
   // terms
   window.TERMS = window.TERMS || {};
   let waiting = [];
