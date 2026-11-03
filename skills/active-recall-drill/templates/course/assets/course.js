@@ -142,6 +142,24 @@
     document.addEventListener('visibilitychange', () => { if (document.hidden) report(); });
   })();
 
+  // 键盘导航：左右翻步骤，上下翻章节
+  document.addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const t = e.target;
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+    const idx = CHAPTERS.findIndex(c => c.id === currentId);
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+      const btn = document.getElementById(e.key === 'ArrowLeft' ? 'prev' : 'next');
+      if (btn) { e.preventDefault(); btn.click(); }
+    } else if (e.key === 'ArrowUp' && idx > 0) {
+      e.preventDefault();
+      location.href = CHAPTERS[idx - 1].file;
+    } else if (e.key === 'ArrowDown' && idx >= 0 && idx < CHAPTERS.length - 1) {
+      e.preventDefault();
+      location.href = CHAPTERS[idx + 1].file;
+    }
+  });
+
   // terms
   window.TERMS = window.TERMS || {};
   let waiting = [];

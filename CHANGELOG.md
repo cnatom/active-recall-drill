@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.5.1 — 2026-11-03
+
+- Keyboard navigation: left/right arrows step the figure, up/down arrows move between chapters. Ignored while typing in an input.
+
 ## 1.5.0 — 2026-11-03
 
 - New `scripts/progress_server.py`: a 127.0.0.1 recorder that pages POST to, so the agent can read which chapter and step the learner is on (`progress.json`).
