@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.8 — 2026-11-03
+
+- Step caption moved above the diagram (part of the figure); only buttons and terms remain in the bottom dock.
+- Follow-up answers now live in a collapsed `.extra` section at the page bottom instead of extending the main step flow.
+
 ## 1.3.7 — 2026-11-03
 
 - Top navigation collapsed to one row (chapter pills scroll horizontally); bottom dock collapsed to one row: buttons, step caption and terms side by side, with the term definition floating above the bar instead of growing it.

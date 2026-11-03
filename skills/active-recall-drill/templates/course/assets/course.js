@@ -78,7 +78,18 @@
   }
 
 
-  // 把控制条与术语固定到底部，滚动时始终可见
+  // 步骤描述移到主图上方；控制条与术语固定到底部
+  (function () {
+    const stage = document.querySelector('.wrap > .stage');
+    const msgEl = document.getElementById('msg');
+    if (stage && msgEl && !document.querySelector('.stepcap')) {
+      const cap = document.createElement('div');
+      cap.className = 'stepcap';
+      stage.parentNode.insertBefore(cap, stage);
+      cap.appendChild(msgEl);
+    }
+  })();
+
   (function () {
     const bar = document.querySelector('.wrap > .bar');
     const terms = document.querySelector('.wrap > .terms');

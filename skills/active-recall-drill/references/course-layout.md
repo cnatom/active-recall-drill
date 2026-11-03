@@ -37,9 +37,10 @@ Add `--lang zh|en` to pin the page language; otherwise it follows the system loc
 
 1. Small chapter number, title, one-line lead (what this chapter solves).
 2. Body: diagram left, table right. The diagram holds nodes and one moving dot; field values live in the fixed table, never in a floating card.
-3. Controls: previous / next / restart plus a one-line caption (≤ 25 words).
+3. Step caption directly above the diagram (it is part of the figure). Controls dock to the viewport bottom with the term row (`assets/course.js` moves `.bar` and `.terms` into `.dock`).
 4. Terms for this step: two or three, expanding to `ABR｜full name｜local name: one line`.
 5. Chapter pager: previous / next.
+6. Follow-up Q&A that is not part of the chapter goes into `<section class="extra"><details>…</details></section>` at the bottom, collapsed by default; it never enters the step array or the chapter list.
 
 The `S` array is the only content source, one entry per step:
 
