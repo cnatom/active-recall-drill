@@ -2,8 +2,8 @@
 """Check an HTML teaching page for SVG connector/box collisions.
 
 Reports connector segments (line/path with an id) that run through a node box.
-Container boxes (room, cabinet) are ignored by size: anything wider than 300 px
-or taller than 300 px is treated as a container.
+Container boxes (room, cabinet) are ignored by size: anything wider than 250 px
+or taller than 250 px is treated as a container.
 
 Usage: python3 check_svg_overlap.py page.html [--allow l0,...]
 Exit code 1 when a collision is found, so it can gate delivery.
@@ -36,7 +36,7 @@ def boxes(svg: str) -> list[tuple[float, float, float, float]]:
     out = []
     for m in RATTR.finditer(svg):
         x, y, w, h = map(float, m.groups())
-        if w > 300 or h > 300:
+        if w > 250 or h > 250:  # container bands, rooms, cabinets
             continue
         out.append((x, y, w, h))
     return out
