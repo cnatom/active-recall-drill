@@ -1,30 +1,29 @@
 # Active Recall Drill
 
-Offline spaced-repetition review: show the question, wait for the answer, reveal, then schedule the next review at 1, 3, 7, 15 and 30 days. The store is one local JSON file — no network, no third-party packages.
-
-Works as a Skill for any agent, and as a plain command-line tool.
+Offline spaced repetition: ask, answer, reveal, then schedule the next review at 1, 3, 7, 15 and 30 days. The store is one local JSON file — no network, no third-party packages.
 
 [中文](README.md) | English
 
 ## Features
 
-- **Predict then reveal**: the question and the answer are separate commands, so the answer does not appear next to the prompt.
-- **Spaced scheduling**: 1 → 3 → 7 → 15 → 30 days on correct answers, mastered after one more pass; partial backs off a day, wrong resets.
-- **Local data**: plain JSON, diffable, syncs with any file sync.
-- **Bilingual**: CLI and course page shell in English and Chinese, following the system locale, overridable with `--lang`.
-- **Course scaffolder**: one subject becomes a course (map + chapter pages + shared assets + glossary), not a pile of pages.
+- Question and answer are separate commands, so the answer never appears with the prompt.
+- 1 → 3 → 7 → 15 → 30 days on correct answers; mastered after one more pass; partial backs off a day, wrong resets.
+- CLI and course page shell in English and Chinese, following the system locale, overridable with `--lang`.
+- One command scaffolds a multi-chapter course: map, chapter pages, shared stylesheet, glossary.
 
 ## Install
-
-From skills.sh:
 
 ```sh
 npx skills add cnatom/active-recall-drill --skill active-recall-drill
 ```
 
-Node.js / npx is needed for the install command only; running needs Python 3.9+ and nothing else.
+To have your agent do it, send this:
 
-Or clone and use it as a CLI:
+> Install the skill: npx skills add cnatom/active-recall-drill --skill active-recall-drill
+
+Install needs Node.js; running needs Python 3.9+.
+
+Or clone and use the CLI:
 
 ```sh
 git clone https://github.com/cnatom/active-recall-drill
@@ -33,7 +32,7 @@ python3 active-recall-drill/skills/active-recall-drill/scripts/drill.py --help
 
 ## Usage
 
-Once installed, just tell the agent:
+Once installed, just say:
 
 > Quiz me on what is due today.
 
@@ -61,7 +60,7 @@ Keep separate stores with `DRILL_STORE=/path/reviews.json`.
 
 ## Notes
 
-Everything stays local: no upload, no model grading — the learner or the agent grades against the stored answer.
+The store and notes stay local; nothing is uploaded. Grading is done by the learner or the agent against the stored answer.
 
 ## License
 

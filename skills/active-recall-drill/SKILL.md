@@ -13,7 +13,7 @@ metadata:
 
 # Active Recall Drill
 
-A local spaced-repetition store plus a drill loop: show the question, wait for an answer, reveal, grade, and let 1/3/7/15/30-day intervals decide the next review. Storage is a single JSON file, so it works offline and rides along with any file sync. It does not fetch study material, grade free-form answers with a model, or plan a curriculum.
+A local spaced-repetition store plus a drill loop: show the question, wait for an answer, reveal, grade, and let 1/3/7/15/30-day intervals decide the next review. Storage is a single JSON file, so it works offline and syncs like any other file. It does not fetch study material, grade free-form answers with a model, or plan a curriculum.
 
 ## When to Use
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.1 — 2026-11-03
+
+- README: added the one-line prompt for installing through an agent; trimmed filler sentences in both languages.
+
 ## 1.3.0 — 2026-11-03
 
 - Repository layout moved to `skills/active-recall-drill/` so skills.sh can discover and install it: `npx skills add cnatom/active-recall-drill --skill active-recall-drill`.
