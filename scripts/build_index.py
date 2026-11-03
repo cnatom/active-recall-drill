@@ -12,7 +12,12 @@ import argparse
 import datetime as dt
 import html
 import re
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # allow loading as a module
+import i18n  # noqa: E402  (local module, resolved after sys.path fix)
+
 
 CARD = """      <a class="card" href="{file}">
         <div class="t">{title}</div>
@@ -21,11 +26,11 @@ CARD = """      <a class="card" href="{file}">
       </a>"""
 
 PAGE = """<!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="{langattr}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{title} · 可视化复习</title>
+<title>{title} · {suffix}</title>
 <style>
   body {{ margin:0; background:#fbfbf9; color:#1b1f24;
           font: 16px/1.6 -apple-system, "PingFang SC", "Helvetica Neue", sans-serif; }}
@@ -45,7 +50,7 @@ PAGE = """<!DOCTYPE html>
 <body>
 <div class="wrap">
   <h1>{title}</h1>
-  <div class="sub">共 {count} 页，按最近修改排序。每页只讲一个概念，点进去就能看。</div>
+  <div class="sub">{subtitle}</div>
 {cards}
 </div>
 </body>
@@ -62,7 +67,7 @@ def read_meta(path: Path) -> tuple[str, str]:
     return title, note
 
 
-def build(target: Path, title: str, out_name: str = "index.html") -> Path:
+def build(target: Path, title: str, out_name: str = "index.html", lang: str = "en") -> Path:
     pages = sorted(
         (p for p in target.glob("*.html") if p.name != out_name),
         key=lambda p: p.stat().st_mtime,
@@ -74,25 +79,34 @@ def build(target: Path, title: str, out_name: str = "index.html") -> Path:
         stamp = dt.datetime.fromtimestamp(page.stat().st_mtime).strftime("%Y-%m-%d")
         cards.append(CARD.format(file=html.escape(page.name), title=html.escape(page_title),
                                  note=html.escape(note), date=stamp))
-    body = "\n".join(cards) if cards else '      <div class="empty">目录里还没有页面。</div>'
+    empty = i18n.t("index_empty", lang)
+    body = "\n".join(cards) if cards else f'      <div class="empty">{html.escape(empty)}</div>'
     out = target / out_name
-    out.write_text(PAGE.format(title=html.escape(title), count=len(pages), cards=body),
-                   encoding="utf-8")
+    out.write_text(PAGE.format(
+        title=html.escape(title), count=len(pages), cards=body,
+        suffix=html.escape(i18n.t("index_suffix", lang)),
+        subtitle=html.escape(i18n.t("index_subtitle", lang, count=len(pages))),
+        langattr="zh-CN" if lang == "zh" else "en",
+    ), encoding="utf-8")
     return out
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="为 可视化/ 目录生成入口页")
+    parser = argparse.ArgumentParser(description=i18n.t("index_desc", i18n.detect()))
     parser.add_argument("dir")
-    parser.add_argument("--title", default="学习可视化")
+    parser.add_argument("--title", default=None)
     parser.add_argument("--out", default="index.html")
+    parser.add_argument("--lang", choices=list(i18n.LANGS), help="output language; default follows the system locale")
     args = parser.parse_args()
+    lang = i18n.detect(args.lang)
+    if args.title is None:
+        args.title = "学习可视化" if lang == "zh" else "Study pages"
     target = Path(args.dir).expanduser()
     if not target.is_dir():
-        raise SystemExit(f"目录不存在：{target}")
-    out = build(target, args.title, args.out)
+        raise SystemExit(i18n.t("dir_missing", lang, path=target))
+    out = build(target, args.title, args.out, lang)
     count = len([p for p in target.glob("*.html") if p.name != args.out])
-    print(f"已生成 {out}，收录 {count} 页")
+    print(i18n.t("index_written", lang, path=out, count=count))
 
 
 if __name__ == "__main__":

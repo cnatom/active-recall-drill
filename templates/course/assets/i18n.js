@@ -1,0 +1,36 @@
+// UI strings for course chrome. Content (titles, explanations) is authored in one language;
+// only the shell is translated. Add a language by adding a key with the same fields.
+window.I18N = {
+  en: {
+    courseMap: "Course map",
+    visited: "visited",
+    notStarted: "not started",
+    prev: "Previous",
+    next: "Next",
+    restart: "Restart",
+    stepOf: "Step {i} of {n}",
+    terms: "Terms on this step",
+    chapterOf: "Chapter {num}",
+    prevChapter: "Previous chapter",
+    nextChapter: "Next chapter",
+    backToMap: "Back to the course map",
+    switchTo: "中文",
+    kicker: "Course",
+  },
+  zh: {
+    courseMap: "课程地图",
+    visited: "已看过",
+    notStarted: "未开始",
+    prev: "上一步",
+    next: "下一步",
+    restart: "从头",
+    stepOf: "第 {i} 步 / 共 {n} 步",
+    terms: "本步术语",
+    chapterOf: "第 {num} 章",
+    prevChapter: "上一章",
+    nextChapter: "下一章",
+    backToMap: "回到课程地图",
+    switchTo: "EN",
+    kicker: "课程",
+  },
+};

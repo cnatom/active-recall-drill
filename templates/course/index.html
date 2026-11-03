@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="{{LANGATTR}}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -27,6 +27,7 @@
 </div>
 
 <script src="assets/course-data.js"></script>
+<script src="assets/i18n.js"></script>
 <script src="assets/terms-data.js"></script>
 <script src="assets/course.js"></script>
 <script>
@@ -41,7 +42,7 @@ CHAPTERS.filter(c => c.id !== 'index').forEach(c => {
   el.style.color = 'inherit';
   el.innerHTML = `<div class="num">${c.num}</div>
     <div><div class="t">${c.title}</div><div class="d">${c.desc || ''}</div></div>
-    <div class="state ${done ? 'done' : ''}">${done ? '已看过' : '未开始'}</div>`;
+    <div class="state ${done ? 'done' : ''}">${done ? courseT('visited') : courseT('notStarted')}</div>`;
   map.appendChild(el);
 });
 </script>

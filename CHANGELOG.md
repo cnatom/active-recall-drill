@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.2.0 — 2026-11-03
+
+- New: `scripts/i18n.py` message catalog; every CLI message and builder page is available in English and Chinese.
+- New: `--lang zh|en` and `DRILL_LANG`; default language follows `LANG` / `LC_ALL`.
+- New: course pages ship `assets/i18n.js` plus a nav language switch; the scaffolded language comes from `new_course.py --lang` and falls back to `navigator.language`.
+- New: `README.zh-CN.md`; other docs stay English-only by design.
+- Builders (`build_index.py`, `build_glossary.py`) gained `--lang` and localised page chrome.
+
 ## 1.1.0 — 2026-11-03
 
 - New: `scripts/new_course.py` scaffolds a multi-chapter course (index map, chapter pages, shared `assets/`, empty terms file) in one command.

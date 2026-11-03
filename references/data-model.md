@@ -1,8 +1,8 @@
-# 数据模型
+# Data model
 
-## 文件
+## File
 
-默认 `data/reviews.json`，可用 `DRILL_STORE` 覆盖。写入是原子的：先写 `*.tmp` 再 `replace`，解析失败时脚本直接退出，不覆盖原文件。
+Default `data/reviews.json`; override with `DRILL_STORE`. Writes are atomic (`*.tmp` then `replace`), and a parse failure exits without touching the original file.
 
 ```json
 {
@@ -31,34 +31,34 @@
 }
 ```
 
-## 字段
+## Fields
 
-| 字段 | 含义 |
+| Field | Meaning |
 |---|---|
-| `id` | 自增整数，只用于命令行引用 |
-| `topic` | `领域/主题` 短标签，统计按它分组 |
-| `question` / `answer` | 题面与答案，答案一到两句 |
-| `source` | 出处，答错时回查 |
-| `status` | `new` 未复习过，`learning` 在学，`mastered` 已掌握 |
-| `due` | 下次复习日期（本地日历日，`YYYY-MM-DD`）；`mastered` 时为空 |
-| `streak` | 连续答对次数 |
-| `interval_idx` | 已走过的间隔下标，`-1` 表示还没对过 |
-| `lapses` | 答错次数，用于找薄弱题 |
-| `reviews` | 逐次评分流水，含时间、结果、备注 |
+| `id` | Auto-increment integer, only used to address items on the command line |
+| `topic` | Short `domain/subtopic` label; `stats` groups by it |
+| `question` / `answer` | Prompt and answer; the answer stays at one or two sentences |
+| `source` | Where the fact comes from, for tracing a wrong answer |
+| `status` | `new` never reviewed, `learning` in rotation, `mastered` done |
+| `due` | Next review date (local calendar day, `YYYY-MM-DD`); empty when mastered |
+| `streak` | Consecutive correct answers |
+| `interval_idx` | Index of the interval already walked; `-1` means never correct |
+| `lapses` | Wrong-answer count, used to spot weak items |
+| `reviews` | Per-review log: timestamp, result, note |
 
-## 状态迁移
+## Transitions
 
 ```
-new --(right)--> learning, interval_idx 0, due +1d
-learning --(right)--> interval_idx +1, due +INTERVALS[idx]；越界后转 mastered
-learning --(partial)--> streak 0, interval_idx 不变, due +1d
-learning --(wrong)--> streak 0, interval_idx 0, lapses +1, due +1d
-mastered --(right)--> 不变，命令提示已掌握，不重复计数
+new      --(right)-->   learning, interval_idx 0, due +1d
+learning --(right)-->   interval_idx +1, due +INTERVALS[idx]; past the end → mastered
+learning --(partial)--> streak 0, interval_idx unchanged, due +1d
+learning --(wrong)-->   streak 0, interval_idx 0, lapses +1, due +1d
+mastered --(right)-->   unchanged; the command reports it as mastered, no recount
 ```
 
-`INTERVALS = [1, 3, 7, 15, 30]`，`MASTERED_STREAK = 6`：走完全部五个间隔后再对一次才算掌握。
+`INTERVALS = [1, 3, 7, 15, 30]`, `MASTERED_STREAK = 6`: all five intervals plus one more correct answer.
 
-## 兼容性
+## Compatibility
 
-- `version` 目前为 1；新增字段按向后兼容方式追加，不改既有字段含义。
-- 手工合并两份库时按 `id` 取并集并重排 `next_id`，再核对 `due`；不要按文件时间覆盖。
+- `version` is 1. New fields are appended in a backward-compatible way; existing fields keep their meaning.
+- To merge two stores by hand, union by `id`, renumber `next_id`, then re-check `due`; do not pick a winner by file timestamp.

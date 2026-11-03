@@ -1,7 +1,7 @@
 ---
 name: active-recall-drill
 description: Quiz learned material with spaced repetition and recall.
-version: 1.1.0
+version: 1.2.0
 author: cnatom, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -26,6 +26,7 @@ Don't use for: explaining a concept for the first time (teach it, then add items
 ## Prerequisites
 
 - Python 3.9+, standard library only.
+- Output language: system locale by default; override with `--lang zh|en` or `DRILL_LANG`. `--json` keys stay English.
 - Writable data directory. Default `data/reviews.json` under the skill; override with `DRILL_STORE=/abs/path/reviews.json` to keep one store per subject or per device.
 
 ## How to Run
@@ -77,6 +78,13 @@ Never hand-edit the JSON during a session; re-run the command instead.
 
 Mastered items are never scheduled again and are skipped by `due`. Grading a mastered item `right` does not recount it.
 
+## Localization
+
+- CLI and generated page chrome exist in English and Chinese (`scripts/i18n.py`, `assets/i18n.js`); add a language by adding one key to both tables.
+- Course content is authored in one language. Only the shell (buttons, labels, step counter, map states) switches.
+- `README.md` is the canonical English entry (`README.zh-CN.md` mirrors it); references and SKILL.md stay English-only to keep instruction density high.
+- Page language resolution order: saved choice in `localStorage` → `window.__COURSE_LANG` from the scaffold → `navigator.language`.
+
 ## Content Rules
 
 - One fact per item; ask for a decision or a cause, not a recitation.
@@ -121,6 +129,7 @@ Conventions (details in `references/course-layout.md`):
 - **Due dates are local calendar days.** A learner crossing timezones may see items a day early or late; migrate data deliberately rather than switching to UTC ad hoc.
 - **Double grading.** One grade per review; re-running `grade ... right` on a mastered item is ignored.
 - **Import needs all three fields.** Every row requires `topic`, `question`, `answer`.
+- **A step's picture is a factual claim.** Verify each step's fields against the real mechanism in both directions; a wrong state (e.g. a transit tag left on the payload at delivery) teaches the inverse model and the learner spots it before you do.
 
 ## Verification
 

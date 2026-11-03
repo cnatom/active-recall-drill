@@ -23,6 +23,15 @@ One page per concept, opened straight from disk. The page carries the explanatio
 - Colour distinguishes direction (outbound vs return) faster than text does.
 - Highlight only what changed; keep everything else neutral.
 
+## Fidelity of each step
+
+Every step's visible state is a factual claim. Check it against the real mechanism, not against what looks tidy.
+
+- Encapsulation is symmetric: whatever is added at ingress is removed at the far end. If the terminal host is shown still holding the transit wrapper, the page teaches the wrong model.
+- Terminal delivery shows the payload as the terminal actually receives it (untagged frame, decoded value), never "with the transit header still on".
+- When a learner's question exposes a contradiction between two steps, fix the state arrays of both; patching only the step they looked at leaves the same error one click away.
+- Before adding a step, read its fields aloud as a sentence ("at this point the frame carries X, addressed to Y"). If the sentence is false, the step is false.
+
 ## State and checks
 
 - Support `?step=N` for deep links and headless assertions.

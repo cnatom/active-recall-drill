@@ -1,61 +1,65 @@
-# 课程形态（多章）
+# Course layout (multi-chapter)
 
-一个主题 = 一门课，不是一个页面列表。判断标准：学完之后要能按顺序复述整条链路，而不是记住几个孤立的解释。
+One subject is one course, not a list of pages. Test: after studying, the learner can retell the whole chain in order, not just recall isolated explanations.
 
-## 目录
+## Tree
 
 ```
-<主题目录>/
-├── index.html            课程地图：章节卡片 + 进度
-├── ch01.html … chNN.html 一章一页
-├── 术语.json             术语源（abbr/full/cn/note/cat/src）
+<subject>/
+├── index.html            course map: chapter cards + progress
+├── ch01.html … chNN.html one page per chapter
+├── 术语.json             term source (abbr/full/cn/note/cat/src)
 └── assets/
-    ├── course.css        唯一的一份样式
-    ├── course.js         章节导航、进度、术语渲染
-    ├── course-data.js    章节数组（window.__COURSE_CHAPTERS）
-    └── terms-data.js     由 术语.json 生成（file:// 用）
+    ├── course.css        the only stylesheet
+    ├── course.js         chapter nav, progress, language switch, terms
+    ├── i18n.js           UI strings for the shell
+    ├── course-data.js    chapter list (window.__COURSE_CHAPTERS, __COURSE_LANG)
+    └── terms-data.js     generated from 术语.json for file://
 ```
 
-用 `scripts/new_course.py` 生成骨架：
+Scaffold with:
 
 ```bash
-python3 scripts/new_course.py <目录> --title "网络云组网" \
-  --chapters "设备与位置|各在哪一层,二层 VLAN|同组直通跨组上三层,三层地址|掩码与网关,路由表|表怎么长出来"
+python3 scripts/new_course.py <dir> --title "Networking basics" \
+  --chapters "Devices|what each box does,Layer 2: VLAN|one switch, several groups"
 ```
 
-## 章节数量与顺序
+Add `--lang zh|en` to pin the page language; otherwise it follows the system locale.
 
-- 5 到 7 章。`00` 固定是课程地图，不承担教学内容。
-- 顺序就是依赖顺序：前一章不点头，后一章不讲。教材里并列的知识点也要排出先后。
-- 一章只讲一个概念。追问产生的是「同一章补一张图」，不是新开一章；确实是新概念才追加章节。
+## Chapter count and order
 
-## 每页的固定形状
+- Five to seven chapters. `00` is always the course map and carries no teaching content.
+- Order is dependency order: do not teach chapter N+1 before the learner accepts chapter N. Even parallel textbook topics get an order.
+- One concept per chapter. A follow-up question patches that chapter with one more picture; only a genuinely new concept becomes a new chapter.
 
-1. 小字章号 + 标题 + 一句导语（一句话说这一章解决什么问题）。
-2. 主体：左图右表。图里只有节点和一个会移动的点；字段值放右侧固定表，不做跟随浮层。
-3. 控制条：上一步 / 下一步 / 从头 + 当前步的一句话（≤ 25 字）。
-4. 本步术语：2 到 3 个，点开 `缩写｜全称｜中文：一句话`。
-5. 章末翻页：上一章 / 下一章。
+## Fixed page shape
 
-`S` 数组是唯一内容源，一步一条：
+1. Small chapter number, title, one-line lead (what this chapter solves).
+2. Body: diagram left, table right. The diagram holds nodes and one moving dot; field values live in the fixed table, never in a floating card.
+3. Controls: previous / next / restart plus a one-line caption (≤ 25 words).
+4. Terms for this step: two or three, expanding to `ABR｜full name｜local name: one line`.
+5. Chapter pager: previous / next.
+
+The `S` array is the only content source, one entry per step:
 
 ```js
 const S = [
-  { msg: '一句话', pos: [x, y], a: '字段一', b: '字段二', terms: ['VLAN', '二层'] },
+  { msg: 'one line', pos: [x, y], a: 'field one', b: 'field two', terms: ['VLAN', 'L2'] },
 ];
 ```
 
-## 进度与导航
+## Progress, navigation, language
 
-- 顶部 `#cnav` 由 `assets/course.js` 注入；当前章高亮，看过的章打勾。
-- 进度存在 `localStorage` 的同一个键里（默认 `netcloud-course-progress`），键名在 `course.js` 顶部，可改。
-- 章节数组在 `assets/course-data.js`，由脚本生成；增删章节改这里并同步生成对应 html。
+- `#cnav` is injected by `assets/course.js`; the current chapter is highlighted and visited chapters are marked.
+- Progress lives under one `localStorage` key (`netcloud-course-progress` by default; change it at the top of `course.js`).
+- The chapter list lives in `assets/course-data.js`; generated. Add a chapter there and create the matching html.
+- UI strings live in `assets/i18n.js`. Language resolution: saved choice → `__COURSE_LANG` → `navigator.language`. The nav has a one-click switch. Content stays in one language; only the shell is translated.
 
-## 交付与检查
+## Delivery and checks
 
-- 改完直接 `open <绝对路径>`，用 `file://` 打开；不做热更新轮询，不依赖本地服务。
-- 数据类文件（术语）要转成 `.js` 才能被 `file://` 页面读到。
-- 逻辑自查用 `?step=N` 加无头浏览器读 DOM，不看截图：
+- After every edit, `open <absolute path>` and work over `file://`; no reload polling, no local server.
+- Data files (terms) must be converted to `.js` before a `file://` page can read them.
+- Assert with `?step=N` and a headless DOM read instead of screenshots:
 
 ```bash
 "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new \
@@ -63,8 +67,8 @@ const S = [
   | grep -o 'id="msg">[^<]*'
 ```
 
-## 维护
+## Maintenance
 
-- 术语只改 `术语.json`，然后跑 `scripts/build_terms.py 术语.json`，不手改 `terms-data.js`。
-- 新章节：在 `course-data.js` 加一条，复制最近一章的 html 改名，替换标题与 `S`。
-- 视觉与节奏规则见 `html-lessons.md`；教学节奏见 `teaching-style.md`。
+- Edit terms only in `术语.json`, then run `scripts/build_terms.py 术语.json`; never hand-edit `terms-data.js`.
+- New chapter: add an entry to `course-data.js`, copy the nearest chapter html, replace the title and `S`.
+- Visual and pacing rules: `html-lessons.md`. Teaching rhythm: `teaching-style.md`.

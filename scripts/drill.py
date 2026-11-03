@@ -14,8 +14,18 @@ import os
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # allow loading as a module
+import i18n  # noqa: E402  (local module, resolved after sys.path fix)
+
 INTERVALS = [1, 3, 7, 15, 30]
 MASTERED_STREAK = len(INTERVALS) + 1  # 走完 1/3/7/15/30 全部间隔后再对一次
+LANG = "en"
+
+
+def M(key: str, **kwargs) -> str:
+    return i18n.t(key, LANG, **kwargs)
+
+
 NEW = "new"
 LEARNING = "learning"
 MASTERED = "mastered"
@@ -48,9 +58,9 @@ def load(store: Path) -> dict:
     try:
         db = json.loads(store.read_text(encoding="utf-8"))
     except json.JSONDecodeError as exc:
-        sys.exit(f"Failed to parse store ({store}): {exc}. Back it up and fix it; refusing to overwrite.")
+        sys.exit(M("parse_failed", store=store, exc=exc))
     if not isinstance(db, dict) or not isinstance(db.get("items"), list):
-        sys.exit(f"Unexpected store structure ({store}). Back it up and fix it; refusing to overwrite.")
+        sys.exit(M("bad_structure", store=store))
     db.setdefault("version", 1)
     db.setdefault("next_id", 1 + max((i.get("id", 0) for i in db["items"]), default=0))
     return db
@@ -67,7 +77,7 @@ def find(db: dict, item_id: int) -> dict:
     for item in db["items"]:
         if item.get("id") == item_id:
             return item
-    sys.exit(f"No item #{item_id}")
+    sys.exit(M("no_item", id=item_id))
 
 
 # ---------------------------------------------------------------- scheduling
@@ -126,12 +136,12 @@ def line(item: dict, show_topic: bool = True) -> str:
 def cmd_add(args, store, db) -> None:
     item = add_item(db, args.topic, args.question, args.answer, args.source, args.tags)
     save(store, db)
-    print(f"Added [#{item['id']}] {item['topic']}, due today")
+    print(M("added", id=item["id"], topic=item["topic"]))
 
 
 def add_item(db, topic, question, answer, source="", tags=None) -> dict:
     if not topic.strip() or not question.strip() or not answer.strip():
-        sys.exit("topic, question and answer are required")
+        sys.exit(M("required_fields"))
     item = {
         "id": db["next_id"],
         "topic": topic.strip(),
@@ -160,9 +170,9 @@ def cmd_due(args, store, db) -> None:
         return
     if not items:
         total = len(db["items"])
-        print(f"Nothing due today. Store holds {total} item(s).")
+        print(M("nothing_due", total=total))
         return
-    print(f"{len(items)} due:")
+    print(M("due_header", count=len(items)))
     for item in items:
         print("  " + line(item))
 
@@ -175,15 +185,15 @@ def cmd_card(args, store, db) -> None:
 
 def cmd_reveal(args, store, db) -> None:
     item = find(db, args.id)
-    print(f"Answer: {item['answer']}")
+    print(M("answer", text=item["answer"]))
     if item.get("source"):
-        print(f"Source: {item['source']}")
+        print(M("source", text=item["source"]))
 
 
 def cmd_grade(args, store, db) -> None:
     item = find(db, args.id)
     if item.get("status") == MASTERED and args.result == "right":
-        print("Already mastered; not recounted")
+        print(M("already_mastered"))
         return
     apply_grade(item, args.result, today())
     item["last_reviewed"] = now().isoformat(timespec="seconds")
@@ -192,9 +202,9 @@ def cmd_grade(args, store, db) -> None:
     )
     save(store, db)
     if item["status"] == MASTERED:
-        print(f"[#{item['id']}] mastered after {item['streak']} correct, no longer scheduled")
+        print(M("mastered_after", id=item["id"], streak=item["streak"]))
     else:
-        print(f"[#{item['id']}] {args.result}, next due {item['due']} (streak {item['streak']})")
+        print(M("graded", id=item["id"], result=args.result, due=item["due"], streak=item["streak"]))
 
 
 def cmd_stats(args, store, db) -> None:
@@ -214,14 +224,14 @@ def cmd_stats(args, store, db) -> None:
                           "due_today": due_today, "due_within_3d": len(in3)},
                          ensure_ascii=False))
         return
-    print(f"{len(items)} item(s): new {counts.get(NEW, 0)}, learning {counts.get(LEARNING, 0)}, mastered {counts.get(MASTERED, 0)}")
-    print(f"Due today: {due_today}; due within 3 days: {len(in3)}")
+    print(M("stats_line", total=len(items), new=counts.get(NEW, 0), learning=counts.get(LEARNING, 0), mastered=counts.get(MASTERED, 0)))
+    print(M("due_today_line", today=due_today, soon=len(in3)))
     topics: dict[str, int] = {}
     for item in items:
         if item.get("status") != MASTERED:
             topics[item.get("topic", "")] = topics.get(item.get("topic", ""), 0) + 1
     if topics:
-        print("In progress: " + ", ".join(f"{k} {v}" for k, v in sorted(topics.items())))
+        print(M("in_progress", topics=", ".join(f"{k} {v}" for k, v in sorted(topics.items()))))
 
 
 def cmd_list(args, store, db) -> None:
@@ -231,7 +241,7 @@ def cmd_list(args, store, db) -> None:
     if args.status:
         items = [i for i in items if i.get("status") == args.status]
     if not items:
-        print("No items matched")
+        print(M("no_match"))
         return
     for item in sorted(items, key=lambda i: i.get("id", 0)):
         due = item.get("due") or "已掌握"
@@ -245,27 +255,27 @@ def cmd_edit(args, store, db) -> None:
         if value:
             item[field] = value.strip()
     save(store, db)
-    print(f"[#{item['id']}] updated")
+    print(M("updated", id=item["id"]))
 
 
 def cmd_rm(args, store, db) -> None:
     item = find(db, args.id)
     db["items"] = [i for i in db["items"] if i.get("id") != args.id]
     save(store, db)
-    print(f"Deleted [#{item['id']}] {item['question']}")
+    print(M("deleted", id=item["id"], question=item["question"]))
 
 
 def cmd_note(args, store, db) -> None:
     topic = args.topic.strip()
     if not topic or not args.text.strip():
-        sys.exit("--topic and --text are required")
+        sys.exit(M("note_required"))
     slug = topic.replace("/", "-").replace(" ", "-")
     target = notes_dir(store) / f"{slug}.md"
     target.parent.mkdir(parents=True, exist_ok=True)
     stamp = now().strftime("%Y-%m-%d %H:%M")
     with target.open("a", encoding="utf-8") as fh:
         fh.write(f"- {stamp} {args.text.strip()}\n")
-    print(f"Appended to {target}")
+    print(M("appended", path=target))
 
 
 def cmd_import(args, store, db) -> None:
@@ -273,7 +283,7 @@ def cmd_import(args, store, db) -> None:
     try:
         rows = json.loads(raw)
     except json.JSONDecodeError as exc:
-        sys.exit(f"Import file is not valid JSON: {exc}")
+        sys.exit(M("import_bad_json", exc=exc))
     if isinstance(rows, dict):
         rows = rows.get("items", [])
     added = []
@@ -281,7 +291,7 @@ def cmd_import(args, store, db) -> None:
         added.append(add_item(db, row["topic"], row["question"], row["answer"],
                               row.get("source", ""), row.get("tags")))
     save(store, db)
-    print(f"Imported {len(added)} item(s): " + ", ".join(f"#{i['id']}" for i in added))
+    print(M("imported", count=len(added), ids=", ".join(f"#{i['id']}" for i in added)))
 
 
 def cmd_selftest(args, store, db) -> None:
@@ -305,14 +315,16 @@ def cmd_selftest(args, store, db) -> None:
     partial = apply_grade({"status": LEARNING, "streak": 2, "interval_idx": 3, "lapses": 0}, "partial", base)
     assert partial["due"] == (base + dt.timedelta(days=1)).isoformat(), partial
     assert partial["interval_idx"] == 3 and partial["streak"] == 0, partial
-    print("selftest ok: 1/3/7/15/30 intervals, mastery on the sixth pass, wrong resets, partial backs off one day")
+    print(M("selftest_ok"))
 
 
 def main(argv: list[str] | None = None) -> None:
-    parser = argparse.ArgumentParser(description="Predict-then-reveal spaced repetition store")
+    parser = argparse.ArgumentParser(description=i18n.t("cli_description", i18n.detect()))
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument("--lang", choices=list(i18n.LANGS), help="output language; default follows the system locale")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
-    p = sub.add_parser("add")
+    p = sub.add_parser("add", parents=[common])
     p.add_argument("--topic", required=True)
     p.add_argument("--question", required=True)
     p.add_argument("--answer", required=True)
@@ -320,58 +332,60 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--tags", default="")
     p.set_defaults(func=cmd_add)
 
-    p = sub.add_parser("import")
+    p = sub.add_parser("import", parents=[common])
     p.add_argument("file")
     p.set_defaults(func=cmd_import)
 
-    p = sub.add_parser("due")
+    p = sub.add_parser("due", parents=[common])
     p.add_argument("--limit", type=int, default=0)
     p.add_argument("--topic")
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_due)
 
-    p = sub.add_parser("card")
+    p = sub.add_parser("card", parents=[common])
     p.add_argument("id", type=int)
     p.set_defaults(func=cmd_card)
 
-    p = sub.add_parser("reveal")
+    p = sub.add_parser("reveal", parents=[common])
     p.add_argument("id", type=int)
     p.set_defaults(func=cmd_reveal)
 
-    p = sub.add_parser("grade")
+    p = sub.add_parser("grade", parents=[common])
     p.add_argument("id", type=int)
     p.add_argument("--result", required=True, choices=["right", "partial", "wrong"])
     p.add_argument("--note", default="")
     p.set_defaults(func=cmd_grade)
 
-    p = sub.add_parser("stats")
+    p = sub.add_parser("stats", parents=[common])
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_stats)
 
-    p = sub.add_parser("list")
+    p = sub.add_parser("list", parents=[common])
     p.add_argument("--topic")
     p.add_argument("--status", choices=[NEW, LEARNING, MASTERED])
     p.set_defaults(func=cmd_list)
 
-    p = sub.add_parser("edit")
+    p = sub.add_parser("edit", parents=[common])
     p.add_argument("id", type=int)
     for name in ("topic", "question", "answer", "source"):
         p.add_argument(f"--{name}")
     p.set_defaults(func=cmd_edit)
 
-    p = sub.add_parser("rm")
+    p = sub.add_parser("rm", parents=[common])
     p.add_argument("id", type=int)
     p.set_defaults(func=cmd_rm)
 
-    p = sub.add_parser("note")
+    p = sub.add_parser("note", parents=[common])
     p.add_argument("--topic", required=True)
     p.add_argument("--text", required=True)
     p.set_defaults(func=cmd_note)
 
-    p = sub.add_parser("selftest")
+    p = sub.add_parser("selftest", parents=[common])
     p.set_defaults(func=cmd_selftest)
 
     args = parser.parse_args(argv)
+    global LANG
+    LANG = i18n.detect(getattr(args, "lang", None))
     if getattr(args, "tags", None):
         args.tags = args.tags.split(",")
     store = store_path()

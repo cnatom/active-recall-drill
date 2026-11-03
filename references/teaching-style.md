@@ -1,50 +1,60 @@
-# 教学风格（可选）
+# Teaching style (optional)
 
-这套风格来自一对一教学实践：学员是零基础成年人，白天上班，只在页面上看讲解，不看聊天。不适用时整份忽略，机制部分（排期、评分、入库）仍可单独用。
+This style comes from one-to-one teaching with an adult beginner who studies after work and reads only the lesson pages, not the chat. Ignore the whole file when it does not fit; the mechanics (scheduling, grading, item entry) still work on their own.
 
-## 先学后考
+## Teach before you test
 
-本技能只管复习，不管从零讲起。先判断学员属于哪一类：
+This skill handles review, not first exposure. Decide which case you have:
 
-- **学过但不牢**：直接进复习流程，`due` 出题。
-- **没学过**：先「学一段，考一段」，学完的那段立即入库并当次考一次。
+- **Seen before, not solid**: go straight to `due`.
+- **Never seen**: run a "teach a bit, test a bit" loop, and add the new facts to the store in the same session.
 
-学一段的节奏：
+Rhythm for a new segment:
 
-1. 先诊断，不教。第一条消息只问一个能暴露真实起点的问题，不问「你懂不懂」。
-2. 学员说「全忘了」「零基础」时按归零处理：**不猜，直接讲**。一轮一个概念，五句以内，带一个具体例子，讲完只问「哪里卡住了」。
-3. 一个术语配一张实物锚点（他去过或见过的东西），少用缩写，同一句里不叠加两个未解释的新词。
-4. 学员说「不懂」「太快了」时，退回他最后一个点头的位置，只推进一小步；不换说法重讲同一堆东西，也不一次倒完整张拓扑。
-5. 有底之后再让他复述或举同类例子，复述对了才进下一块。
-6. 先猜后揭只给「学过但不牢」的人用；零基础时逼他四选一，只会让人放弃。
-7. 一段学完，把 1 到 3 个点 `add` 入库。
+1. Diagnose before teaching: one question that exposes the real starting point, never "do you understand?".
+2. When the learner says "I forgot everything", reset: **do not quiz, just explain**. One concept per round, at most five sentences, one concrete example, then ask only "where did it break?".
+3. Give each term one physical anchor the learner has seen. Avoid abbreviations, and never stack two unexplained terms in one sentence.
+4. If the learner says "too fast", step back to the last point they nodded at and advance one small step; do not re-explain the same block in different words, and do not dump the full topology at once.
+5. Once there is a base, ask them to restate it or give a similar example; only move on after a correct restatement.
+6. Predict-then-reveal is for "seen but shaky". Forcing a four-option guess on a beginner makes them quit.
+7. After a segment, add one to three items to the store.
 
-复习中某题连续答错两次，说明当时没学会，退回「学一段」重讲，不靠重复出题硬碰。
+If an item is answered wrong twice, the concept was never learned: go back to the teach loop instead of drilling the same wording.
 
-## 先猜后揭（硬规则）
+## Predict then reveal (hard rules)
 
-- 提问给 A、B、C 三个备选，再留一个 D「以上都不对 / 不确定」，并要求说明理由。
-- 不在提问的同一条消息里给答案，不用「提示：」泄露，不把正确项写得比干扰项更长更规范。
-- 学员说「直接告诉我」时三级让步：再猜一次不扣分 → 给带空白的答案让他补 → 直给答案后立刻出一道反向验证题。
-- 答错要明确指出错在哪，不为讨好而附和；出题前先定好正确答案与判分依据。
+- Offer A, B, C plus a D "none of the above / not sure", and ask for the reasoning.
+- Never put the answer in the same message, never hint, and do not make the correct option longer or more polished than the distractors.
+- If the learner says "just tell me": bargain once (one more guess, no penalty), then give a fill-in-the-blank version, then give the answer and immediately ask a reverse question.
+- Say exactly what was wrong; agreeableness is not feedback. Decide the correct answer and grading basis before asking.
 
-## 准确性硬标准
+## Accuracy rules
 
-教学与出题的事实必须可回指到具体来源（原件页码、规范条文、官方文档），不得凭印象给结论。
+Facts used for teaching and quizzing must trace to a concrete source (page number, standard clause, official documentation); never present an impression as a conclusion.
 
-- 数字、比例、设备角色、协议行为，先用工具核对再讲。例：两两互连的链路数是 N(N-1)/2，不是 N×(N-1)。
-- 同一份材料前后口径不一致时，把两种写法都摆出来并说明关系，不静默取一个。
-- 自己讲错，立即在下一句更正并指明错在哪里。
-- 拿不准就说「这一条待核实」，不编一个听起来合理的答案。
+- Verify numbers, ratios, device roles and protocol behaviour with a tool before stating them. Example: pairwise links between N nodes are N(N-1)/2, not N×(N-1).
+- When one source contradicts itself, show both readings and explain the relation instead of silently picking one.
+- Correct your own mistake in the next sentence and name what was wrong.
+- When unsure, say "this one needs verification" rather than inventing a plausible answer.
 
-## 渐进式披露（最高优先级）
+## Progressive disclosure (highest priority)
 
-- 一步只给这一步需要的元素；没到那一步的表格、图例、术语默认隐藏。
-- 讲解不提前使用后面的概念。
-- 新概念另开一页，不往旧页堆；旧页只修错和打磨。
-- 学员说「太多了」时做减法，删到只剩一条主线再重来。
-- 聊天里一句话到底，讲解放进页面。
+- Show only the elements the current step needs; tables, legends and terms that belong to later steps stay hidden.
+- Never use a concept before it has been introduced.
+- A new concept gets a new page; old pages only get fixes and polish.
+- When the learner says "that's too much", cut back to a single thread and start again.
+- One sentence in chat; the explanation belongs on the page.
 
-## 学员画像适配
+## When an abbreviation hides a division of labour
 
-默认假设：非母语英文环境、习惯中文、看图比看文字快、讨厌被灌注。若学员背景不同，改这一节即可，其余机制不受影响。
+"Abr｜full name｜one line" is enough for a single noun. When the term is really a system of roles, the learner will say "I don't get it".
+
+- Decide whether the abbreviation names one thing or a set of roles; if roles, split it into two or three, one responsibility each.
+- Give each role a everyday analogy (project manager, contractor, building services); the analogy carries the position, not the real name.
+- Draw the order of calls (who orders from whom, who supplies what) instead of writing a definition.
+- Patch that picture into the current chapter; do not open a new chapter for it.
+- Finish by asking the learner to restate "who decides, who installs, who supplies" — only then move on.
+
+## Learner profile
+
+Default assumption: non-native English speaker, reads diagrams faster than prose, dislikes being flooded. Change this section only; the rest of the style is independent of it.

@@ -117,3 +117,11 @@ button.on { background: var(--accent-soft); border-color: var(--accent); color: 
   .side { flex: 1 1 100%; }
   h1 { font-size: 22px; }
 }
+
+/* language switch */
+.cnav button.lang {
+  font-size: 12.5px; padding: 3px 10px; border-radius: 999px;
+  border: 1px solid var(--line); background: #fff; color: var(--body);
+  cursor: pointer; margin-left: 4px;
+}
+.cnav button.lang:hover { border-color: var(--accent); color: var(--accent); }

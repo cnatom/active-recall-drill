@@ -1,5 +1,7 @@
 # Active Recall Drill
 
+English | [中文](README.zh-CN.md)
+
 A small, offline spaced-repetition tool for people who study with an agent. Ask the question, wait for the answer, reveal, grade — the store then schedules the next review at 1, 3, 7, 15, 30 days. One JSON file, no accounts, no network, no dependencies beyond the Python standard library.
 
 It ships as an [Agent Skill](https://hermes-agent.nousresearch.com/docs) and also works as a plain command-line tool.

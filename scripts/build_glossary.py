@@ -15,13 +15,18 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))  # allow loading as a module
+import i18n  # noqa: E402  (local module, resolved after sys.path fix)
+
+
 PAGE = """<!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="{langattr}">
 <head>
 <meta charset="utf-8">
-<meta name="note" content="单位专业术语缩写与一句话解释，可搜索筛选。">
+<meta name="note" content="{note}">
 <title>{title}</title>
 <style>
   body {{ margin:0; background:#fbfbf9; color:#1b1f24;
@@ -47,31 +52,32 @@ PAGE = """<!DOCTYPE html>
 <body>
 <div class="wrap">
   <h1>{title}</h1>
-  <div class="sub">共 {count} 条。输入缩写、全称或中文都能搜；点分类可筛。</div>
+  <div class="sub">{subtitle}</div>
   <div class="ctl">
-    <input id="q" placeholder="搜 TOR、网关、VLAN…" autofocus>
+    <input id="q" placeholder="{placeholder}" autofocus>
     <span id="cats"></span>
     <span class="count" id="count"></span>
   </div>
   <table>
-    <thead><tr><th style="width:110px">缩写</th><th style="width:190px">全称</th><th style="width:130px">中文</th><th>一句话解释</th><th style="width:120px">出处</th></tr></thead>
+    <thead><tr><th style="width:110px">{h1}</th><th style="width:190px">{h2}</th><th style="width:130px">{h3}</th><th>{h4}</th><th style="width:120px">{h5}</th></tr></thead>
     <tbody id="rows"></tbody>
   </table>
-  <div class="empty" id="empty" hidden>没有匹配的条目。</div>
+  <div class="empty" id="empty" hidden>{empty}</div>
 </div>
 <script>
 const TERMS = {data};
+const UI = {ui};
 const rows = document.getElementById('rows');
 const q = document.getElementById('q');
 const count = document.getElementById('count');
 const empty = document.getElementById('empty');
 const catsBox = document.getElementById('cats');
-let cat = '全部';
+let cat = UI.all;
 
-const cats = ['全部', ...Array.from(new Set(TERMS.map(t => t.cat || '其他')))];
+const cats = [UI.all, ...Array.from(new Set(TERMS.map(t => t.cat || UI.other)))];
 cats.forEach(c => {{
   const b = document.createElement('button');
-  b.className = 'chip' + (c === '全部' ? ' on' : '');
+  b.className = 'chip' + (c === UI.all ? ' on' : '');
   b.textContent = c;
   b.onclick = () => {{ cat = c; document.querySelectorAll('.chip').forEach(x => x.classList.toggle('on', x === b)); draw(); }};
   catsBox.appendChild(b);
@@ -86,7 +92,7 @@ function hl(text, term) {{
 
 function draw() {{
   const term = q.value.trim();
-  const list = TERMS.filter(t => (cat === '全部' || (t.cat || '其他') === cat) &&
+  const list = TERMS.filter(t => (cat === UI.all || (t.cat || UI.other) === cat) &&
     (!term || [t.abbr, t.full, t.cn, t.note].join(' ').toLowerCase().includes(term.toLowerCase())));
   rows.innerHTML = list.map(t => `<tr>
     <td class="ab">${{hl(t.abbr || '', term)}}</td>
@@ -94,7 +100,7 @@ function draw() {{
     <td class="cn">${{hl(t.cn || '', term)}}</td>
     <td>${{hl(t.note || '', term)}}</td>
     <td class="src">${{t.src || ''}}</td></tr>`).join('');
-  count.textContent = `显示 ${{list.length}} / ${{TERMS.length}} 条`;
+  count.textContent = UI.show + ' ' + list.length + ' / ' + TERMS.length;
   empty.hidden = list.length > 0;
 }}
 q.addEventListener('input', draw);
@@ -106,19 +112,32 @@ draw();
 
 
 def main() -> None:
-    ap = argparse.ArgumentParser(description="由术语 JSON 生成可搜索的术语表 HTML")
+    ap = argparse.ArgumentParser(description=i18n.t("glossary_desc", i18n.detect()))
     ap.add_argument("json_file")
     ap.add_argument("--out")
+    ap.add_argument("--lang", choices=list(i18n.LANGS), help="output language; default follows the system locale")
     a = ap.parse_args()
+    lang = i18n.detect(a.lang)
     src = Path(a.json_file).expanduser()
     data = json.loads(src.read_text(encoding="utf-8"))
     terms = data.get("terms") or []
     title = data.get("title") or src.stem
     out = Path(a.out).expanduser() if a.out else src.with_suffix(".html")
-    out.write_text(PAGE.format(title=title, count=len(terms),
-                               data=json.dumps(terms, ensure_ascii=False, indent=2)),
-                   encoding="utf-8")
-    print(f"已生成 {out}，收录 {len(terms)} 条")
+    ui = {k: i18n.t(k, lang) for k in ("glossary_all", "glossary_other", "glossary_show")}
+    out.write_text(PAGE.format(
+        title=title, count=len(terms),
+        data=json.dumps(terms, ensure_ascii=False, indent=2),
+        ui=json.dumps(ui, ensure_ascii=False),
+        note=i18n.t("glossary_note", lang),
+        subtitle=i18n.t("glossary_subtitle", lang, count=len(terms)),
+        placeholder=i18n.t("glossary_placeholder", lang),
+        empty=i18n.t("glossary_empty", lang),
+        h1=i18n.t("glossary_h1", lang), h2=i18n.t("glossary_h2", lang),
+        h3=i18n.t("glossary_h3", lang), h4=i18n.t("glossary_h4", lang),
+        h5=i18n.t("glossary_h5", lang),
+        langattr="zh-CN" if lang == "zh" else "en",
+    ), encoding="utf-8")
+    print(i18n.t("glossary_written", lang, path=out, count=len(terms)))
 
 
 if __name__ == "__main__":
