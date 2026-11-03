@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.9.2 — 2026-11-03
+
+- UI spec gains a typography section: `.stage.wide` for wide diagrams, minimum 11.5-unit SVG text, inactive opacity at least 0.45. A 1100-unit figure pushed into the 700 px column had been rendering labels at ~7 px.
+
 ## 1.9.1 — 2026-11-03
 
 - Term search is a non-modal popover anchored bottom-right: no backdrop, the page stays readable and clickable; clicking outside closes it.

@@ -36,6 +36,15 @@ The shell the learner approved. `templates/course/assets/course.css` and `course
 - Step bubble: margin 14 px top, 20 px bottom (tail needs the space).
 - Content max width 1080 px; body bottom padding = dock height + 18 px.
 
+## Typography inside diagrams
+
+The earlier spec set no font sizes, so a 1100-unit-wide viewBox squeezed into a 700 px column scaled 11 px labels down to ~7 px and the learner could not read them.
+
+- **Layout decides legibility first**: a diagram with more than ~15 nodes, or any viewBox wider than 900 units, uses `.stage.wide` — the figure spans the full content width and the side table moves below it. Never shrink a wide diagram into the two-column slot.
+- **Minimum SVG font 11.5 units**; node title 14, secondary line 12, annotation/footnote 11.5. Nothing below 11, ever (no 10 px labels).
+- **Inactive state opacity ≥ 0.45** in stepped diagrams; 0.25 turns text into grey noise.
+- Effective size is what counts: with the diagram at full width a 900-unit viewBox renders near 1:1, so 12 units ≈ 12 px on screen.
+
 ## Changing the shell
 
 Edit `templates/course/assets/course.css` / `course.js` first, then copy both into the live course's `assets/` so every chapter picks it up at once. Existing courses keep their own copy; a shell change must be applied to each course directory explicitly, and the change recorded in that course's worklog.
