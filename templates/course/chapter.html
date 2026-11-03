@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{NUM}} {{TITLE}}</title>
+<meta name="note" content="{{NOTE}}">
+<link rel="stylesheet" href="assets/course.css">
+</head>
+<body data-chapter="{{ID}}">
+<div class="cnav" id="cnav"></div>
+
+<div class="wrap">
+  <header class="page">
+    <div class="kicker">第 {{NUM}} 章</div>
+    <h1>{{TITLE}}</h1>
+    <p class="lede">{{LEAD}}</p>
+  </header>
+
+  <!-- 换成这一章的图：节点 + 一个会动的点；字段用右侧固定表 -->
+  <div class="stage">
+    <svg viewBox="0 0 760 320">
+      <rect x="60" y="120" width="160" height="80" rx="10" fill="#fff" stroke="#2a8455" stroke-width="1.8"/>
+      <text x="140" y="166" text-anchor="middle" font-size="14">起点</text>
+      <rect x="540" y="120" width="160" height="80" rx="10" fill="#fff" stroke="#2b62bd" stroke-width="1.8"/>
+      <text x="620" y="166" text-anchor="middle" font-size="14">终点</text>
+      <line x1="220" y1="160" x2="540" y2="160" stroke="#cfd6de" stroke-width="2"/>
+      <circle id="dot" cx="140" cy="160" r="8" fill="#e8853a" stroke="#b45c1a" stroke-width="2"/>
+    </svg>
+    <div class="side">
+      <div class="cap">当前步骤的字段</div>
+      <table>
+        <tr><th style="width:84px">字段一</th><td id="f-a">值</td></tr>
+        <tr><th>字段二</th><td id="f-b">值</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="bar">
+    <button id="prev">上一步</button>
+    <button id="next" class="primary">下一步</button>
+    <button id="reset">从头</button>
+    <span class="jump" id="step">第 0 步 / 共 0 步</span>
+    <span class="msg" id="msg">占位：这一步要讲什么，一句话。</span>
+  </div>
+
+  <div class="terms">
+    <span class="tlabel">本步术语</span>
+    <span id="tchips"></span>
+    <div class="tdef" id="tdef" hidden></div>
+  </div>
+
+  <div class="pager" id="pager"></div>
+</div>
+
+<script src="assets/course-data.js"></script>
+<script src="assets/terms-data.js"></script>
+<script src="assets/course.js"></script>
+<script>
+// 每一步一条：msg 一句话（≤25 字），pos 是移动点的坐标，terms 只放本步 2 到 3 个词
+const S = [
+  { msg: '占位：这一步要讲什么，一句话。', pos: [140, 160], a: '值一', b: '值二', terms: [] },
+];
+
+const dot = document.getElementById('dot');
+const msg = document.getElementById('msg');
+const stepLabel = document.getElementById('step');
+const fa = document.getElementById('f-a');
+const fb = document.getElementById('f-b');
+let i = 0;
+
+function paint(n) {
+  i = Math.max(0, Math.min(S.length - 1, n));
+  const s = S[i];
+  dot.setAttribute('cx', s.pos[0]);
+  dot.setAttribute('cy', s.pos[1]);
+  fa.textContent = s.a;
+  fb.textContent = s.b;
+  msg.textContent = s.msg;
+  stepLabel.textContent = `第 ${i} 步 / 共 ${S.length - 1} 步`;
+  showTerms('tchips', s.terms);
+}
+
+document.getElementById('next').onclick = () => paint(i + 1);
+document.getElementById('prev').onclick = () => paint(i - 1);
+document.getElementById('reset').onclick = () => paint(0);
+const m = location.search.match(/step=(\d)/);
+paint(m ? +m[1] : 0);
+</script>
+</body>
+</html>

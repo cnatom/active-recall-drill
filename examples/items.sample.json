@@ -1,0 +1,23 @@
+[
+  {
+    "topic": "networking/subnetting",
+    "question": "Do 10.0.1.5 and 10.0.2.7 share a subnet under /24?",
+    "answer": "No. /24 fixes the first three octets; 10.0.1 differs from 10.0.2.",
+    "source": "Kurose & Ross, ch. 4",
+    "tags": ["subnet"]
+  },
+  {
+    "topic": "python/concurrency",
+    "question": "Why does the GIL not prevent data races inside a single bytecode-free numpy call?",
+    "answer": "It does prevent them at bytecode boundaries only; C extensions release the GIL and must synchronize themselves.",
+    "source": "CPython docs, threading",
+    "tags": ["gil"]
+  },
+  {
+    "topic": "english/tense",
+    "question": "Which tense fits: a fact discovered yesterday that is still true?",
+    "answer": "Simple present; the statement is true now, not only at discovery time.",
+    "source": "Practical English Usage, entry 418",
+    "tags": []
+  }
+]

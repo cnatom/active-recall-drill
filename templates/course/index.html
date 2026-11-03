@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{TITLE}}</title>
+<meta name="note" content="{{NOTE}}">
+<link rel="stylesheet" href="assets/course.css">
+</head>
+<body data-chapter="index">
+<div class="cnav" id="cnav"></div>
+
+<div class="wrap">
+  <header class="page">
+    <div class="kicker">{{KICKER}}</div>
+    <h1>{{TITLE}}</h1>
+    <p class="lede">{{LEAD}}</p>
+  </header>
+
+  <div class="path">{{PATH}}</div>
+
+  <div class="map" id="map"></div>
+
+  <div class="note accent">{{NOTE_BODY}}</div>
+
+  <div class="pager" id="pager"></div>
+</div>
+
+<script src="assets/course-data.js"></script>
+<script src="assets/terms-data.js"></script>
+<script src="assets/course.js"></script>
+<script>
+const map = document.getElementById('map');
+const progress = (() => { try { return JSON.parse(localStorage.getItem('netcloud-course-progress') || '{}'); } catch (e) { return {}; } })();
+CHAPTERS.filter(c => c.id !== 'index').forEach(c => {
+  const done = !!progress[c.id];
+  const el = document.createElement('a');
+  el.className = 'chap';
+  el.href = c.file;
+  el.style.textDecoration = 'none';
+  el.style.color = 'inherit';
+  el.innerHTML = `<div class="num">${c.num}</div>
+    <div><div class="t">${c.title}</div><div class="d">${c.desc || ''}</div></div>
+    <div class="state ${done ? 'done' : ''}">${done ? '已看过' : '未开始'}</div>`;
+  map.appendChild(el);
+});
+</script>
+</body>
+</html>
