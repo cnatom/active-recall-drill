@@ -17,13 +17,15 @@
 npx skills add cnatom/active-recall-drill --skill active-recall-drill
 ```
 
-不想自己敲，把下面这句发给智能体：
+交给智能体执行：
 
-> 安装技能：npx skills add cnatom/active-recall-drill --skill active-recall-drill
+```text
+安装技能：npx skills add cnatom/active-recall-drill --skill active-recall-drill
+```
 
 安装要 Node.js；运行只要 Python 3.9+。
 
-也可以克隆后用 CLI：
+克隆后用 CLI：
 
 ```sh
 git clone https://github.com/cnatom/active-recall-drill
@@ -32,15 +34,11 @@ python3 active-recall-drill/skills/active-recall-drill/scripts/drill.py --help
 
 ## 使用
 
-装好后直接说：
-
-> 考我今天该复习的题。
-
-> 把这段内容做成 5 道复习题。
-
-> 为这个主题建一门课。
-
-手动调用：
+```text
+考我今天该复习的题。
+把这段内容做成 5 道复习题。
+为这个主题建一门课。
+```
 
 ```sh
 python3 scripts/drill.py due --limit 5

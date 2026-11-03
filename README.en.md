@@ -17,13 +17,15 @@ Offline spaced repetition: ask, answer, reveal, then schedule the next review at
 npx skills add cnatom/active-recall-drill --skill active-recall-drill
 ```
 
-To have your agent do it, send this:
+Ask your agent to run it:
 
-> Install the skill: npx skills add cnatom/active-recall-drill --skill active-recall-drill
+```text
+Install the skill: npx skills add cnatom/active-recall-drill --skill active-recall-drill
+```
 
 Install needs Node.js; running needs Python 3.9+.
 
-Or clone and use the CLI:
+Clone and use the CLI:
 
 ```sh
 git clone https://github.com/cnatom/active-recall-drill
@@ -32,15 +34,11 @@ python3 active-recall-drill/skills/active-recall-drill/scripts/drill.py --help
 
 ## Usage
 
-Once installed, just say:
-
-> Quiz me on what is due today.
-
-> Turn this into five review questions.
-
-> Build a course for this subject.
-
-Or run it yourself:
+```text
+Quiz me on what is due today.
+Turn this into five review questions.
+Build a course for this subject.
+```
 
 ```sh
 python3 scripts/drill.py due --limit 5
