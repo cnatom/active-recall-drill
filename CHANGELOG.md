@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.10 — 2026-11-03
+
+- Step caption turned into a plain speech bubble (white, hairline border, small tail pointing at the figure) instead of a tinted band.
+
 ## 1.3.9 — 2026-11-03
 
 - Step caption restyled: 17.5 px semibold on a tinted band with an accent left border, so it no longer reads like body copy.

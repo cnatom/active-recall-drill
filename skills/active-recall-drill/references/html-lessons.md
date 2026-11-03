@@ -6,8 +6,8 @@ One page per concept, opened straight from disk. The page carries the explanatio
 
 1. Title plus one line of context (no more).
 2. Diagram and a fixed field table side by side: the diagram holds nodes and one moving dot; the table shows the packet or item fields for the current step.
-3. Controls: previous / next / restart, plus a one-line caption for the current step (≤ 25 words).
-4. A "terms on this step" row: two or three terms, each expanding to `ABBR｜full name｜plain name: one sentence`.
+3. Step caption directly above the diagram, styled as its own band: semibold, one size larger than body copy, tinted background and an accent left border. It is part of the figure, not of the controls, and plain body styling makes it disappear into the page.
+4. Controls (previous / next / restart) and the "terms on this step" row docked to the bottom of the viewport: two or three terms, each expanding to `ABBR｜full name｜plain name: one sentence`.
 5. Chapter pager at the bottom when pages form a course.
 
 ## Drawing rules
@@ -43,7 +43,18 @@ Every step's visible state is a factual claim. Check it against the real mechani
   | grep -o 'id="msg">[^<]*'
 ```
 
-- Do not build screenshot-plus-vision review loops for every iteration; read the DOM while iterating. **One rendered look is still required before delivery** — see next section.
+- Do not build screenshot-plus-vision review loops; screenshot review is banned outright (see "Order of operations"). Read the DOM instead.
+
+## Page chrome: both bars one row, caption in the body
+
+Chrome that eats vertical space is a defect: the learner reads diagrams, so anything fixed to the top or bottom must stay a single row and give the height back to the figure.
+
+- **Top nav**: brand, chapter pills and the language toggle on one line. Pills scroll horizontally (`overflow-x: auto; flex-wrap: nowrap`, hidden scrollbar) instead of wrapping to a second line; padding 4-6 px, pill font ~12 px.
+- **Bottom dock**: one flex row holding the three buttons, the step counter and the term chips. Buttons come from `.bar`, judged by `display: contents` so its children join the dock row; the caption is *not* in the dock. Long captions ellipsize there only if they stayed; in the current design they sit above the figure.
+- **Term definition**: absolutely positioned above the dock (`bottom: calc(100% + 4px)`), so expanding a term never grows the bar.
+- **Body padding**: `dock.offsetHeight + 18px` reserved on load and resize, otherwise the last paragraphs hide behind the dock.
+- **Caption**: 17-18 px semibold on a tinted band with a 3 px accent left border; margin 12-16 px around. Same styling as body text is a reported defect.
+- Header padding stays ≤ 20 px so the diagram starts high on the page.
 
 ## Order of operations: open first, verify second
 
@@ -80,3 +91,7 @@ Screenshot-plus-vision review is banned: the learner rejected it twice as too sl
 | "Too much at once" | layer table, rules and terms all on one page | hide or delete anything not needed at the current step |
 | "Terms should not be a separate page" | standalone glossary page | terms inline per step, generated from one JSON |
 | "I have to click back to the page every time" | reload-polling hot reload | open the page after each edit instead |
+| "上下区域太大了" | nav wrapping to rows, dock stacking caption above terms | one row each; caption moved into the body |
+| "描述性文字跟普通文字一样" | caption left at body font weight | semibold band with accent border |
+| "追问内容占用了主体" | follow-up answer appended to the step flow | `.extra` + `<details>` appendix at the page bottom |
+| connector through a cabinet | straight line between distant nodes, drawn after the nodes | connectors first, elbows outside the container row, `check_svg_overlap.py` |
