@@ -162,3 +162,35 @@ button.on { background: var(--accent-soft); border-color: var(--accent); color: 
 .extra details { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; }
 .extra summary { cursor: pointer; font-size: 14px; color: var(--body); }
 .extra details[open] summary { margin-bottom: 10px; color: var(--ink); }
+
+/* 全局术语搜索 */
+.term-fab {
+  position: fixed; right: 18px; bottom: 84px; z-index: 60;
+  font: inherit; font-size: 12.5px; padding: 7px 12px; border-radius: 999px;
+  border: 1px solid var(--line); background: #fff; color: var(--body);
+  box-shadow: 0 4px 14px rgba(22,24,29,.08); cursor: pointer;
+}
+.term-fab:hover { border-color: var(--accent); color: var(--accent); }
+.term-overlay {
+  position: fixed; inset: 0; z-index: 70; display: none;
+  background: rgba(22,24,29,.28); backdrop-filter: blur(2px);
+}
+.term-overlay.open { display: block; }
+.term-panel {
+  width: min(640px, calc(100vw - 40px)); margin: 90px auto 0;
+  background: #fff; border: 1px solid var(--line); border-radius: 14px;
+  box-shadow: 0 18px 50px rgba(22,24,29,.18); overflow: hidden;
+}
+.term-panel input {
+  width: 100%; border: 0; border-bottom: 1px solid var(--line);
+  padding: 14px 16px; font: inherit; font-size: 15px; outline: none;
+}
+.term-results { max-height: 46vh; overflow-y: auto; }
+.term-item { padding: 10px 16px; border-bottom: 1px solid #f1f3f6; cursor: pointer; }
+.term-item:hover { background: #f7f6fd; }
+.term-item .a { font: 600 14px ui-monospace, Menlo, monospace; }
+.term-item .c { color: var(--muted); font-size: 12.5px; margin-left: 8px; }
+.term-detail { padding: 14px 16px; border-top: 1px solid var(--line); font-size: 13.5px; color: var(--body); display: none; }
+.term-detail.open { display: block; }
+.term-detail b { color: var(--ink); }
+.term-foot { display: flex; justify-content: space-between; padding: 8px 16px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); }

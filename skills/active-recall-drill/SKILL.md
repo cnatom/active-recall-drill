@@ -1,7 +1,7 @@
 ---
 name: active-recall-drill
 description: Quiz learned material with spaced repetition and recall.
-version: 1.8.1
+version: 1.9.0
 author: cnatom, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -115,7 +115,7 @@ Conventions (details in `references/course-layout.md`):
 - For any subject with hardware — networks, servers, data centres — one chapter is physical: racks, which box sits where, how many cables per server, uplink speeds, A/B zones. Logical chapters alone leave "why two NICs, why two switches" unanswerable, and a quiz on device roles then fails even though every logical page was read. Place the physical chapter right after the role chapter and before any device-role quiz.
 - One concept per page. A follow-up question patches the chapter it belongs to; a genuinely new concept becomes a new chapter, not a new page beside the course.
 - Every page: title + one-line lead, the step caption as a plain speech bubble directly above the diagram (white, hairline border, small tail pointing down; 16.5 px, weight 500 — not a tinted band, not body copy), diagram with a fixed side table, one-row dock at the viewport bottom (previous/next/restart, counter, term chips, `复制上下文`), chapter pager. Both nav and dock stay one row; pills scroll horizontally on a vertical wheel; `←/→` step, `↑/↓` change chapter; the body reserves `dock height + 18px`. Full contract and rejected variants: `references/ui-spec.md`.
-- Terms live in `术语.json` and each step shows only the two or three it needs. A standalone glossary page is allowed when the learner wants to memorise them: cards with the abbreviation always visible and independent toggles for the English full name and the Chinese explanation (`遮住英文`, `遮住中文`, `只看缩写` hides both), a card click revealing what is masked, plus `全部遮住/翻开`, `随机一张` and search. Link it from the nav as its own pill; it stays outside the chapter sequence.
+- Terms live in `术语.json` and each step shows only the two or three it needs. Every page also gets a global term search: a floating `术语 ⌘K` button opens an overlay with an input and result list (`/` or ⌘K anywhere, Enter opens the first hit, Esc closes), and the arrow-key step/chapter shortcuts are suppressed while it is open. A standalone glossary page is allowed when the learner wants to memorise them: cards with the abbreviation always visible and independent toggles for the English full name and the Chinese explanation (`遮住英文`, `遮住中文`, `只看缩写` hides both), a card click revealing what is masked, plus `全部遮住/翻开`, `随机一张` and search. Link it from the nav as its own pill; it stays outside the chapter sequence.
 - Follow-up material produced while answering questions goes into a `.extra` section at the bottom inside `<details>`, never into the main step flow or the chapter list; the chapter sequence stays what it was when the course was designed.
 - All pages share `assets/`; never fork the stylesheet per chapter.
 - Open with `file://` after each edit. No reload polling, no local server. Open first, verify second with `check_svg_overlap.py` plus DOM step checks; never a screenshot-plus-vision pass.

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.9.0 — 2026-11-03
+
+- Global term search on every page: floating `术语 ⌘K` button, overlay with input and results, `/` or ⌘K to open, Enter for the first hit, Esc to close, link to the glossary page; step/chapter arrow shortcuts are suppressed while it is open.
+
 ## 1.8.1 — 2026-11-03
 
 - Glossary masks are independent: `遮住英文` and `遮住中文` toggle separately; `只看缩写` hides both; clicking a card reveals what is masked.

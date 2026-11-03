@@ -186,9 +186,93 @@
     ta.remove();
   }
 
+
+  // 全局术语搜索：任何页面右键浮一个入口，⌘K / 斜杠打开
+  (function () {
+    const fab = document.createElement('button');
+    fab.className = 'term-fab';
+    fab.textContent = '术语 ⌘K';
+    document.body.appendChild(fab);
+
+    const overlay = document.createElement('div');
+    overlay.className = 'term-overlay';
+    overlay.innerHTML = `<div class="term-panel">
+      <input id="termQ" placeholder="搜缩写、英文或中文…" autocomplete="off">
+      <div class="term-results" id="termResults"></div>
+      <div class="term-detail" id="termDetail"></div>
+      <div class="term-foot"><span>回车打开第一条 · Esc 关闭</span><a href="glossary.html">打开术语表</a></div>
+    </div>`;
+    document.body.appendChild(overlay);
+    const input = overlay.querySelector('#termQ');
+    const results = overlay.querySelector('#termResults');
+    const detail = overlay.querySelector('#termDetail');
+    let list = [];
+
+    function allTerms() {
+      const map = window.TERMS || {};
+      const seen = new Set();
+      return Object.values(map).filter(t => {
+        if (seen.has(t.abbr)) return false;
+        seen.add(t.abbr);
+        return true;
+      });
+    }
+
+    function draw() {
+      const key = input.value.trim().toLowerCase();
+      const arr = allTerms().filter(t => !key || [t.abbr, t.full, t.cn, t.note].join(' ').toLowerCase().includes(key));
+      list = arr.slice(0, 40);
+      results.innerHTML = list.map(t =>
+        `<div class="term-item" data-abbr="${t.abbr}"><span class="a">${t.abbr}</span><span class="c">${t.cn || ''}</span></div>`
+      ).join('') || '<div class="term-item"><span class="c">没有匹配</span></div>';
+      detail.className = 'term-detail';
+    }
+
+    function openTerm(abbr) {
+      const t = allTerms().find(x => x.abbr === abbr);
+      if (!t) return;
+      detail.innerHTML = `<b>${t.abbr}</b> ｜ ${t.full || ''} ｜ ${t.cn || ''}<br>${t.note || ''}`;
+      detail.className = 'term-detail open';
+    }
+
+    results.addEventListener('click', e => {
+      const item = e.target.closest('.term-item');
+      if (item && item.dataset.abbr) openTerm(item.dataset.abbr);
+    });
+
+    function openPanel() {
+      overlay.classList.add('open');
+      document.body.classList.add('term-open');
+      input.value = '';
+      draw();
+      setTimeout(() => input.focus(), 0);
+    }
+    function closePanel() {
+      overlay.classList.remove('open');
+      document.body.classList.remove('term-open');
+    }
+
+    fab.onclick = openPanel;
+    overlay.addEventListener('click', e => { if (e.target === overlay) closePanel(); });
+    input.addEventListener('input', draw);
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && list[0]) openTerm(list[0].abbr);
+      if (e.key === 'Escape') closePanel();
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && overlay.classList.contains('open')) closePanel();
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); openPanel(); }
+      if (e.key === '/' && !overlay.classList.contains('open') &&
+          !['INPUT','TEXTAREA'].includes((e.target || {}).tagName) && !e.target.isContentEditable) {
+        e.preventDefault(); openPanel();
+      }
+    });
+  })();
+
   // 键盘导航：左右翻步骤，上下翻章节
   document.addEventListener('keydown', e => {
     if (e.metaKey || e.ctrlKey || e.altKey) return;
+    if (document.body.classList.contains('term-open')) return;
     const t = e.target;
     if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
     const idx = CHAPTERS.findIndex(c => c.id === currentId);
