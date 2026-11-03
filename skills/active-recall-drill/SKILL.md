@@ -1,7 +1,7 @@
 ---
 name: active-recall-drill
 description: Quiz learned material with spaced repetition and recall.
-version: 1.6.0
+version: 1.7.0
 author: cnatom, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -121,12 +121,11 @@ Conventions (details in `references/course-layout.md`):
 
 ## Knowing which chapter the learner is on
 
-A course opened from `file://` cannot write to disk by itself, and the learner rejected running a recorder daemon. The mechanism is an explicit sync instead:
+No daemon and no file access: the page cannot write to disk from `file://`, and both a recorder server and a file-picker sync were rejected as inelegant.
 
-- The bottom dock carries a `同步进度` button. It writes `progress.json` (current chapter, step, and the visited map) through the File System Access API; the handle is remembered in IndexedDB, so later clicks only re-confirm permission. Without API support it falls back to downloading `progress.json`.
-- Before answering anything about a course, read `<course dir>/progress.json`. `current` is where the learner was when they last synced; `updated` tells you how stale it is. Say the timestamp if it is old instead of pretending it is live.
-- Never claim to watch the screen: without a sync there is no signal at all, so ask which chapter instead of guessing.
-- Do not reintroduce a background recorder or a full-screen overlay without the learner's explicit request; both were rejected (one leaves a process, the other swallows clicks).
+- The bottom dock carries a `复制上下文` button. It copies a short block — current chapter, file, step, chapters already visited, timestamp — to the clipboard so the learner can paste it into the chat.
+- When such a block arrives, treat it as authoritative for this turn: resume from that chapter and step, and do not ask again which page they are reading.
+- Without a pasted block there is no signal; ask instead of guessing. Never claim to watch the screen, and do not reintroduce a background recorder or a full-screen overlay without an explicit request.
 
 ## After the learner finishes a course
 

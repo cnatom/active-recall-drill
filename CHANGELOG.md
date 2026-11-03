@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.7.0 — 2026-11-03
+
+- Progress sharing replaced by a `复制上下文` button: copies chapter, file, step, visited chapters and timestamp to the clipboard so the learner can paste it into the chat. No file picker, no daemon.
+
 ## 1.6.0 — 2026-11-03
 
 - Progress recording replaced by an explicit `同步进度` button using the File System Access API: writes `progress.json` from the page, remembers the file handle, falls back to download. No background daemon.
