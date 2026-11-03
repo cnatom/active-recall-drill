@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.1 — 2026-11-03
+
+- Glossary masks are independent: `遮住英文` and `遮住中文` toggle separately; `只看缩写` hides both; clicking a card reveals what is masked.
+
 ## 1.8.0 — 2026-11-03
 
 - Standalone glossary page allowed when the learner wants to memorise terms: abbreviation + full English visible, Chinese and explanation hidden until clicked, with `只看缩写`, `全部遮住/翻开`, `随机一张` and search. Linked from the nav, outside the chapter sequence.
