@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.0 — 2026-11-03
+
+- Standalone glossary page allowed when the learner wants to memorise terms: abbreviation + full English visible, Chinese and explanation hidden until clicked, with `只看缩写`, `全部遮住/翻开`, `随机一张` and search. Linked from the nav, outside the chapter sequence.
+
 ## 1.7.1 — 2026-11-03
 
 - Context copy now reports the real position (`第 N 步 / 共 M 步`) instead of only the total.

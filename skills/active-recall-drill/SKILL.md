@@ -1,7 +1,7 @@
 ---
 name: active-recall-drill
 description: Quiz learned material with spaced repetition and recall.
-version: 1.7.1
+version: 1.8.0
 author: cnatom, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -114,7 +114,8 @@ Conventions (details in `references/course-layout.md`):
 - Start with 5 to 7 chapters; `00` is always the map. That count is a ceiling on what is taught at once, not a cap on the course: a production system grows to 10-15 chapters along the coverage chain in `references/course-layout.md` (roles → physical → redundancy → how services attach → isolation → addressing/numbering → real topology → management plane → operations → automation). Add in role order instead of explaining the missing link in chat, keep one concept per chapter, and never let two chapters carry the same title after a reorder.
 - For any subject with hardware — networks, servers, data centres — one chapter is physical: racks, which box sits where, how many cables per server, uplink speeds, A/B zones. Logical chapters alone leave "why two NICs, why two switches" unanswerable, and a quiz on device roles then fails even though every logical page was read. Place the physical chapter right after the role chapter and before any device-role quiz.
 - One concept per page. A follow-up question patches the chapter it belongs to; a genuinely new concept becomes a new chapter, not a new page beside the course.
-- Every page: title + one-line lead, the step caption as a plain speech bubble directly above the diagram (white, hairline border, small tail pointing down; 16.5 px, weight 500 — not a tinted band, not body copy), diagram with a fixed side table, one-row dock at the viewport bottom (previous/next/restart, counter, term chips), chapter pager. Both nav and dock stay one row; the body reserves `dock height + 18px`. Full contract and rejected variants: `references/ui-spec.md`.
+- Every page: title + one-line lead, the step caption as a plain speech bubble directly above the diagram (white, hairline border, small tail pointing down; 16.5 px, weight 500 — not a tinted band, not body copy), diagram with a fixed side table, one-row dock at the viewport bottom (previous/next/restart, counter, term chips, `复制上下文`), chapter pager. Both nav and dock stay one row; pills scroll horizontally on a vertical wheel; `←/→` step, `↑/↓` change chapter; the body reserves `dock height + 18px`. Full contract and rejected variants: `references/ui-spec.md`.
+- Terms live in `术语.json` and each step shows only the two or three it needs. A standalone glossary page is allowed when the learner wants to memorise them: cards with abbreviation + full English, Chinese and explanation hidden until clicked, plus `只看缩写`, `全部遮住/翻开`, `随机一张` and search. Link it from the nav as its own pill; it stays outside the chapter sequence.
 - Follow-up material produced while answering questions goes into a `.extra` section at the bottom inside `<details>`, never into the main step flow or the chapter list; the chapter sequence stays what it was when the course was designed.
 - All pages share `assets/`; never fork the stylesheet per chapter.
 - Open with `file://` after each edit. No reload polling, no local server. Open first, verify second with `check_svg_overlap.py` plus DOM step checks; never a screenshot-plus-vision pass.
@@ -151,6 +152,7 @@ A blank answer after "I read every page" is a content gap, not a memory gap. Han
 - **A term chip renders empty when the key is missing from `术语.json`.** Adding a chapter that uses new terms requires adding those entries and rerunning `build_terms.py`; otherwise the row is blank and looks broken.
 - **Two abbreviations with near-identical localized names teach each other's meaning.** `EMS` (Element Management System) and `VNFM` (VNF Manager) both read as "网元管理…"; a learner who says "the element manager" may mean either. When such a pair appears, one term card must contrast them in a line (EMS governs a running element's config and alarms; VNFM creates and scales the element), and an answer that swaps the names is `partial`.
 - **A logical-roles course introduces no physical referents.** After chapters on VLANs, gateways and routing, the learner can still be unable to answer "why two NICs per server, why two switches". That is a coverage gap, not a memory gap: add the physical chapter described under course conventions, then quiz.
+- **A mechanism chapter needs a failure step, not just a description.** When a component exists to survive something (escape port, peer-link, standby gateway), a card saying "used when the uplink fails" does not teach why it is needed. Add one step where the failure is marked on the figure and one where the traffic visibly leaves through the mechanism; the learner's question "what triggers it, why is it necessary" is the signal that the description alone failed.
 - **SVG paints in document order.** A connector written after the node groups covers the boxes it crosses, and a straight line between two distant nodes cuts through whatever sits between them. Put connectors first, route elbows around containers, and run the overlap check before opening the page.
 
 ## Verification

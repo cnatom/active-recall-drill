@@ -57,7 +57,7 @@
     }).join('');
     navHost.innerHTML = `<div class="inner">
       <a class="brand" href="index.html">${t('courseMap')}</a>
-      <nav class="pills">${pills}</nav>
+      <nav class="pills">${pills}<a class="pill" href="glossary.html">术语表</a></nav>
       <button class="lang" id="langToggle">${t('switchTo')}</button>
     </div>`;
     // 鼠标停在章节列表上时，垂直滚轮改为横向滚动

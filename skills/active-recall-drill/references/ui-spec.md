@@ -10,7 +10,14 @@ The shell the learner approved. `templates/course/assets/course.css` and `course
 4. **Figure + side table** — as described in `html-lessons.md`.
 5. **Cards / notes** — two cards at most, each one sentence.
 6. **Follow-up appendix** (optional) — `.extra` section, a `<details>` block titled by the question, collapsed by default. Never placed between steps.
-7. **Dock** — fixed to the viewport bottom, one row: previous / next / restart, step counter, term chips. It stays visible while scrolling; the body reserves padding equal to its height.
+7. **Dock** — fixed to the viewport bottom, one row: previous / next / restart, step counter, term chips, and the `复制上下文` button at the right. It stays visible while scrolling; the body reserves padding equal to its height.
+
+## Interactions
+
+- **Chapter pills**: a vertical mouse wheel over the strip scrolls it horizontally (`scrollLeft += deltaY`, only when the strip overflows, and only when the gesture is vertical). A wheel-only mouse must be able to reach the last chapter.
+- **Keyboard**: `←`/`→` trigger previous/next step; `↑`/`↓` open the previous/next chapter. Ignore the handler while focus is in `input`, `textarea` or `contenteditable`, and do nothing at the first/last chapter instead of wrapping.
+- **`复制上下文`**: copies `【课程进度】` plus current chapter, file, `第 N 步 / 共 M 步`, chapters visited and a timestamp. Derived from the page itself, never from a server, a file picker or a background process.
+- No full-screen overlay: a capture-phase listener is enough, and an overlay swallows the learner's real clicks.
 
 ## Rules that came from rejected versions
 
