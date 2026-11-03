@@ -77,6 +77,26 @@
       ${next ? `<a href="${next.file}">${next.num} ${next.title} →</a>` : `<a href="index.html">${t('backToMap')}</a>`}`;
   }
 
+
+  // 把控制条与术语固定到底部，滚动时始终可见
+  (function () {
+    const bar = document.querySelector('.wrap > .bar');
+    const terms = document.querySelector('.wrap > .terms');
+    if (!bar && !terms) return;
+    const dock = document.createElement('div');
+    dock.className = 'dock';
+    const inner = document.createElement('div');
+    inner.className = 'inner';
+    dock.appendChild(inner);
+    if (bar) inner.appendChild(bar);
+    if (terms) inner.appendChild(terms);
+    document.body.appendChild(dock);
+    const pad = () => { document.body.style.paddingBottom = (dock.offsetHeight + 18) + 'px'; };
+    pad();
+    window.addEventListener('resize', pad);
+    window.addEventListener('load', pad);
+  })();
+
   // terms
   window.TERMS = window.TERMS || {};
   let waiting = [];

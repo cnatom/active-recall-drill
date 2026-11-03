@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.6 — 2026-11-03
+
+- Course pages dock the controls, the step caption and the term row to the bottom of the viewport, so they stay visible while scrolling a tall diagram; `assets/course.js` moves the existing blocks into `.dock` and reserves body padding.
+
 ## 1.3.5 — 2026-11-03
 
 - Visual review removed: screenshot-plus-vision is too slow for the learner. Pre-delivery checks are the SVG collision script plus DOM step assertions only.

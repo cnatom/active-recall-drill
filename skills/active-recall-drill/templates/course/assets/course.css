@@ -125,3 +125,17 @@ button.on { background: var(--accent-soft); border-color: var(--accent); color: 
   cursor: pointer; margin-left: 4px;
 }
 .cnav button.lang:hover { border-color: var(--accent); color: var(--accent); }
+
+/* 固定在底部的控制条：按钮、步骤说明、本步术语始终可见 */
+.dock {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+  background: rgba(252, 252, 250, .97);
+  border-top: 1px solid var(--line);
+  backdrop-filter: saturate(180%) blur(10px);
+  box-shadow: 0 -6px 18px rgba(22, 24, 29, .05);
+}
+.dock .inner { max-width: 1080px; margin: 0 auto; padding: 8px 26px 10px; }
+.dock .bar { margin: 0; gap: 8px; }
+.dock .msg { flex-basis: 100%; font-size: 14px; min-height: 20px; }
+.dock .terms { margin: 6px 0 0; }
+.dock .tdef { margin-top: 4px; }

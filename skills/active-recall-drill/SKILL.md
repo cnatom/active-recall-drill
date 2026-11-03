@@ -1,7 +1,7 @@
 ---
 name: active-recall-drill
 description: Quiz learned material with spaced repetition and recall.
-version: 1.3.5
+version: 1.3.6
 author: cnatom, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -114,7 +114,7 @@ Conventions (details in `references/course-layout.md`):
 - Start with 5 to 7 chapters; `00` is always the map. The count is a ceiling on what is taught at once, not a cap on the course: when review shows a whole role chain was never introduced (who installs a virtual network function vs who manages it afterwards), add a chapter in role order instead of a paragraph in chat.
 - For any subject with hardware — networks, servers, data centres — one chapter is physical: racks, which box sits where, how many cables per server, uplink speeds, A/B zones. Logical chapters alone leave "why two NICs, why two switches" unanswerable, and a quiz on device roles then fails even though every logical page was read. Place the physical chapter right after the role chapter and before any device-role quiz.
 - One concept per page. A follow-up question patches the chapter it belongs to; a genuinely new concept becomes a new chapter, not a new page beside the course.
-- Every page: title + one-line lead, diagram with a fixed side table, previous/next/restart, one-line caption per step (≤ 25 words), terms for the current step, chapter pager.
+- Every page: title + one-line lead, diagram with a fixed side table, previous/next/restart, one-line caption per step (≤ 25 words), terms for the current step, chapter pager. Controls, the step caption and the term row are docked to the bottom of the viewport (`assets/course.js` moves them into `.dock`), so they stay visible while the learner scrolls a long diagram.
 - All pages share `assets/`; never fork the stylesheet per chapter.
 - Open with `file://` after each edit. No reload polling, no local server. Open first, verify second with `check_svg_overlap.py` plus DOM step checks; never a screenshot-plus-vision pass.
 
