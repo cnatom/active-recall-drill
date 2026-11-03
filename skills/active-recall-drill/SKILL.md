@@ -1,7 +1,7 @@
 ---
 name: active-recall-drill
 description: Quiz learned material with spaced repetition and recall.
-version: 1.3.2
+version: 1.3.3
 author: cnatom, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -13,7 +13,7 @@ metadata:
 
 # Active Recall Drill
 
-A local spaced-repetition store plus a drill loop: show the question, wait for an answer, reveal, grade, and let 1/3/7/15/30-day intervals decide the next review. Storage is a single JSON file, so it works offline and syncs like any other file. It does not fetch study material, grade free-form answers with a model, or plan a curriculum.
+A local spaced-repetition store plus a drill loop: show the question, wait for an answer, reveal, grade, and let 1/3/7/15/30-day intervals decide the next review. Storage is a single JSON file, so it works offline and rides along with any file sync. It does not fetch study material, grade free-form answers with a model, or plan a curriculum.
 
 ## When to Use
 
@@ -30,8 +30,6 @@ Don't use for: explaining a concept for the first time (teach it, then add items
 - Writable data directory. Default `data/reviews.json` under the skill; override with `DRILL_STORE=/abs/path/reviews.json` to keep one store per subject or per device.
 
 ## How to Run
-
-All paths below are relative to this skill directory (where this `SKILL.md` lives); the scripts need no installation and no third-party packages.
 
 ```bash
 python3 scripts/drill.py due --limit 5
@@ -63,7 +61,7 @@ Never hand-edit the JSON during a session; re-run the command instead.
 
 1. `due --limit 5`. If nothing is due, say so and ask whether to add items or learn something new. Done when either a list or an explicit "nothing due" is stated.
 2. One item per turn: `card <id>`, wait for the learner's answer, then `reveal <id>`. Done when the answer was revealed only after the learner spoke.
-3. Grade against the stored answer: `right` complete, `partial` right direction but a key detail missing, `wrong` contradicts it. Name what was missing, then `grade`. Done when each asked item has exactly one grade.
+3. Grade against the stored answer: `right` complete, `partial` right direction but a key detail missing, `wrong` contradicts it. A right mechanism with the wrong name is `partial`, not `right` — choosing the correct acronym while calling it by its neighbour's localized name shows the distinction was never learned. Name what was missing, then `grade`. Done when each asked item has exactly one grade.
 4. If the learner asks for the answer outright, bargain once ("one more guess, no penalty"), then give it and immediately ask a reverse question on the same fact.
 5. Close with `stats` and one takeaway via `note --topic <topic> --text "..."`. Done when stats print and one note line is written.
 
@@ -84,7 +82,7 @@ Mastered items are never scheduled again and are skipped by `due`. Grading a mas
 
 - CLI and generated page chrome exist in English and Chinese (`scripts/i18n.py`, `assets/i18n.js`); add a language by adding one key to both tables.
 - Course content is authored in one language. Only the shell (buttons, labels, step counter, map states) switches.
-- `README.md` is the canonical English entry (`README.zh-CN.md` mirrors it); references and SKILL.md stay English-only to keep instruction density high.
+- `README.md` is Chinese and `README.en.md` mirrors it; references and SKILL.md stay English-only to keep instruction density high.
 - Page language resolution order: saved choice in `localStorage` → `window.__COURSE_LANG` from the scaffold → `navigator.language`.
 
 ## Content Rules
@@ -109,20 +107,30 @@ python3 scripts/new_course.py <dir> --title "Networking basics" \
   --chapters "Devices|what each box does,Layer 2: VLAN|one switch, several groups,Layer 3: IP and gateway|crossing groups"
 ```
 
-The script creates `index.html` (course map with progress), `ch01.html`…`chNN.html`, `assets/{course.css,course.js,course-data.js,terms-data.js}`, and an empty `术语.json`. Chapter titles may carry a `|description`.
+The script creates `index.html` (course map with progress), `ch01.html`…`chNN.html`, `assets/{course.css,course.js,i18n.js,course-data.js,terms-data.js}`, and an empty `术语.json`. Chapter titles may carry a `|description`. Upgrading an older course to a newer shell is a separate recipe in `references/course-layout.md`.
 
 Conventions (details in `references/course-layout.md`):
 
-- 5 to 7 chapters; `00` is always the map. Order encodes prerequisites and the learner is not allowed to skip.
+- Start with 5 to 7 chapters; `00` is always the map. The count is a ceiling on what is taught at once, not a cap on the course: when review shows a whole role chain was never introduced (who installs a virtual network function vs who manages it afterwards), add a chapter in role order instead of a paragraph in chat.
+- For any subject with hardware — networks, servers, data centres — one chapter is physical: racks, which box sits where, how many cables per server, uplink speeds, A/B zones. Logical chapters alone leave "why two NICs, why two switches" unanswerable, and a quiz on device roles then fails even though every logical page was read. Place the physical chapter right after the role chapter and before any device-role quiz.
 - One concept per page. A follow-up question patches the chapter it belongs to; a genuinely new concept becomes a new chapter, not a new page beside the course.
 - Every page: title + one-line lead, diagram with a fixed side table, previous/next/restart, one-line caption per step (≤ 25 words), terms for the current step, chapter pager.
 - All pages share `assets/`; never fork the stylesheet per chapter.
 - Open with `file://` after each edit. No reload polling, no local server.
-- Assert with `?step=N` plus headless DOM reads, not screenshots.
+- Before delivering a page: `scripts/check_svg_overlap.py` must print `no collisions`, then take one screenshot and look at it for overlaps, clipped text and connectors through boxes. Draw connectors before node groups so boxes cover lines; route cables that pass a neighbour as elbows outside the row.
+
+## After the learner finishes a course
+
+A blank answer after "I read every page" is a content gap, not a memory gap. Handle it as such.
+
+1. Grade the item `wrong` with a note naming the gap; do not re-ask the same item in the same turn.
+2. Find the concept the item depends on. If the course never introduced it, the fix is a page change: patch the chapter it belongs to, or add one chapter that walks the chain in role order. A definition in chat is not a fix — the learner reads pages, not the transcript.
+3. Re-test that item on the next scheduled day, not immediately after teaching; the scheduler already carries it.
+4. If the learner names several related terms as unknown (`EMS MANO NFVO VNFM VIM`), treat them as one chain and teach the chain once, top-down, instead of five separate definitions.
 
 ## Lesson Pages (optional, single page)
 
-`references/html-lessons.md` covers the one-page form: skeleton, progressive steps, field tables beside the diagram, fast animation, `?step=N` assertions, and the `file://` JSON pitfall. Start from `templates/lesson-page.html`; `scripts/build_index.py` builds an entry page and `scripts/build_terms.py` turns a terms JSON into a `<script>`-loadable data file.
+`references/html-lessons.md` covers the one-page form: skeleton, progressive steps, field tables beside the diagram, fast animation, `?step=N` assertions, the `file://` JSON pitfall, and the pre-delivery self-check (`scripts/check_svg_overlap.py` plus one rendered look). Start from `templates/lesson-page.html`; `scripts/build_index.py` builds an entry page and `scripts/build_terms.py` turns a terms JSON into a `<script>`-loadable data file.
 
 ## Pitfalls
 
@@ -132,6 +140,10 @@ Conventions (details in `references/course-layout.md`):
 - **Double grading.** One grade per review; re-running `grade ... right` on a mastered item is ignored.
 - **Import needs all three fields.** Every row requires `topic`, `question`, `answer`.
 - **A step's picture is a factual claim.** Verify each step's fields against the real mechanism in both directions; a wrong state (e.g. a transit tag left on the payload at delivery) teaches the inverse model and the learner spots it before you do.
+- **A term chip renders empty when the key is missing from `术语.json`.** Adding a chapter that uses new terms requires adding those entries and rerunning `build_terms.py`; otherwise the row is blank and looks broken.
+- **Two abbreviations with near-identical localized names teach each other's meaning.** `EMS` (Element Management System) and `VNFM` (VNF Manager) both read as "网元管理…"; a learner who says "the element manager" may mean either. When such a pair appears, one term card must contrast them in a line (EMS governs a running element's config and alarms; VNFM creates and scales the element), and an answer that swaps the names is `partial`.
+- **A logical-roles course introduces no physical referents.** After chapters on VLANs, gateways and routing, the learner can still be unable to answer "why two NICs per server, why two switches". That is a coverage gap, not a memory gap: add the physical chapter described under course conventions, then quiz.
+- **SVG paints in document order.** A connector written after the node groups covers the boxes it crosses, and a straight line between two distant nodes cuts through whatever sits between them. Put connectors first, route elbows around containers, and run the overlap check before opening the page.
 
 ## Verification
 

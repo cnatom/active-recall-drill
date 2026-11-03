@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.3 — 2026-11-03
+
+- New: `scripts/check_svg_overlap.py` — samples every connector against node rects and fails on collisions; run before opening a page.
+- Lessons now require one rendered look (headless screenshot) before delivery, plus DOM step checks; the earlier "skip vision" rule was wrong.
+- Documented drawing order (connectors before node groups) and elbow routing around containers.
+
 ## 1.3.2 — 2026-11-03
 
 - README restructured after comparable skill repos: badge, one-line scope, install, usage, file tree, requirements, notes, license.

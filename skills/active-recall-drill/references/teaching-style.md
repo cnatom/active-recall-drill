@@ -36,6 +36,7 @@ Facts used for teaching and quizzing must trace to a concrete source (page numbe
 - When one source contradicts itself, show both readings and explain the relation instead of silently picking one.
 - Correct your own mistake in the next sentence and name what was wrong.
 - When unsure, say "this one needs verification" rather than inventing a plausible answer.
+- Name the redundancy mode instead of saying "redundant": server NIC bonding plus MC-LAG on the device pair is active-active (both sides carry traffic), while only virtual-gateway roles such as VRRP run active-standby. Letting "主备" stand for both teaches that half the hardware idles, which is false.
 
 ## Progressive disclosure (highest priority)
 
