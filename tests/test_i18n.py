@@ -93,6 +93,11 @@ class CliLanguageTest(unittest.TestCase):
         out = self.run_cli("add", "--topic", "t", "--question", "q", "--answer", "a", "--lang", "zh")
         self.assertIn("已入库", out)
 
+    def test_lang_before_subcommand(self) -> None:
+        out = self.run_cli("--lang", "zh", "selftest")
+        self.assertIn("selftest ok", out)
+        self.assertIn("间隔", out)
+
     def test_english_output(self) -> None:
         out = self.run_cli("add", "--topic", "t", "--question", "q", "--answer", "a", "--lang", "en")
         self.assertIn("Added", out)

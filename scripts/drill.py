@@ -320,8 +320,10 @@ def cmd_selftest(args, store, db) -> None:
 
 def main(argv: list[str] | None = None) -> None:
     parser = argparse.ArgumentParser(description=i18n.t("cli_description", i18n.detect()))
+    parser.add_argument("--lang", choices=list(i18n.LANGS), help="output language; default follows the system locale")
     common = argparse.ArgumentParser(add_help=False)
-    common.add_argument("--lang", choices=list(i18n.LANGS), help="output language; default follows the system locale")
+    common.add_argument("--lang", choices=list(i18n.LANGS), default=argparse.SUPPRESS,
+                        help="same as the global --lang, accepted after the subcommand")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     p = sub.add_parser("add", parents=[common])
