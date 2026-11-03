@@ -1,7 +1,7 @@
 ---
 name: active-recall-drill
 description: Quiz learned material with spaced repetition and recall.
-version: 1.3.10
+version: 1.4.0
 author: cnatom, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -114,7 +114,7 @@ Conventions (details in `references/course-layout.md`):
 - Start with 5 to 7 chapters; `00` is always the map. The count is a ceiling on what is taught at once, not a cap on the course: when review shows a whole role chain was never introduced (who installs a virtual network function vs who manages it afterwards), add a chapter in role order instead of a paragraph in chat.
 - For any subject with hardware — networks, servers, data centres — one chapter is physical: racks, which box sits where, how many cables per server, uplink speeds, A/B zones. Logical chapters alone leave "why two NICs, why two switches" unanswerable, and a quiz on device roles then fails even though every logical page was read. Place the physical chapter right after the role chapter and before any device-role quiz.
 - One concept per page. A follow-up question patches the chapter it belongs to; a genuinely new concept becomes a new chapter, not a new page beside the course.
-- Every page: title + one-line lead, the step caption directly above the diagram on its own tinted band (semibold, accent left border — never styled like body copy), diagram with a fixed side table, previous/next/restart and the term row docked to the bottom of the viewport, chapter pager. Both the top nav and the bottom dock stay one row: pills scroll horizontally, the dock holds buttons + counter + term chips only, and the body reserves `dock height + 18px`.
+- Every page: title + one-line lead, the step caption as a plain speech bubble directly above the diagram (white, hairline border, small tail pointing down; 16.5 px, weight 500 — not a tinted band, not body copy), diagram with a fixed side table, one-row dock at the viewport bottom (previous/next/restart, counter, term chips), chapter pager. Both nav and dock stay one row; the body reserves `dock height + 18px`. Full contract and rejected variants: `references/ui-spec.md`.
 - Follow-up material produced while answering questions goes into a `.extra` section at the bottom inside `<details>`, never into the main step flow or the chapter list; the chapter sequence stays what it was when the course was designed.
 - All pages share `assets/`; never fork the stylesheet per chapter.
 - Open with `file://` after each edit. No reload polling, no local server. Open first, verify second with `check_svg_overlap.py` plus DOM step checks; never a screenshot-plus-vision pass.
@@ -130,7 +130,7 @@ A blank answer after "I read every page" is a content gap, not a memory gap. Han
 
 ## Lesson Pages (optional, single page)
 
-`references/html-lessons.md` covers the one-page form: skeleton, page chrome (one-row nav and dock, caption band), progressive steps, field tables beside the diagram, fast animation, `?step=N` assertions, the `file://` JSON pitfall, and the delivery order (open, then `scripts/check_svg_overlap.py` plus DOM checks; no screenshots). Start from `templates/lesson-page.html`; `scripts/build_index.py` builds an entry page and `scripts/build_terms.py` turns a terms JSON into a `<script>`-loadable data file.
+`references/ui-spec.md` is the visual contract: nav, step bubble, figure, dock, appendix, with the rejected variants and their replacements. `references/html-lessons.md` covers the mechanics: skeleton, progressive steps, field tables, fast animation, `?step=N` assertions, the `file://` JSON pitfall, and the pre-delivery geometry check. Start from `templates/lesson-page.html`; `scripts/build_index.py` builds an entry page and `scripts/build_terms.py` turns a terms JSON into a `<script>`-loadable data file.
 
 ## Pitfalls
 

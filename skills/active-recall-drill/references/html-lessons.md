@@ -6,7 +6,7 @@ One page per concept, opened straight from disk. The page carries the explanatio
 
 1. Title plus one line of context (no more).
 2. Diagram and a fixed field table side by side: the diagram holds nodes and one moving dot; the table shows the packet or item fields for the current step.
-3. Step caption directly above the diagram, styled as its own band: semibold, one size larger than body copy, tinted background and an accent left border. It is part of the figure, not of the controls, and plain body styling makes it disappear into the page.
+3. Step caption directly above the diagram, as a plain speech bubble: white, hairline border, 12 px radius, small tail pointing down at the figure, 16.5 px at weight 500. It is part of the figure, not a control; a tinted band reads as decoration and plain body styling makes it disappear. Exact values in `ui-spec.md`.
 4. Controls (previous / next / restart) and the "terms on this step" row docked to the bottom of the viewport: two or three terms, each expanding to `ABBR｜full name｜plain name: one sentence`.
 5. Chapter pager at the bottom when pages form a course.
 
@@ -53,7 +53,7 @@ Chrome that eats vertical space is a defect: the learner reads diagrams, so anyt
 - **Bottom dock**: one flex row holding the three buttons, the step counter and the term chips. Buttons come from `.bar`, judged by `display: contents` so its children join the dock row; the caption is *not* in the dock. Long captions ellipsize there only if they stayed; in the current design they sit above the figure.
 - **Term definition**: absolutely positioned above the dock (`bottom: calc(100% + 4px)`), so expanding a term never grows the bar.
 - **Body padding**: `dock.offsetHeight + 18px` reserved on load and resize, otherwise the last paragraphs hide behind the dock.
-- **Caption**: 17-18 px semibold on a tinted band with a 3 px accent left border; margin 12-16 px around. Same styling as body text is a reported defect.
+- **Caption**: speech bubble above the figure — white, 1 px border, 12 px radius, tail at lower left, 16.5 px / 500 weight, 14 px above and 20 px below (the tail needs the space). Tinted bands and caption-inside-the-dock were both rejected.
 - Header padding stays ≤ 20 px so the diagram starts high on the page.
 
 ## Order of operations: open first, verify second
@@ -92,6 +92,6 @@ Screenshot-plus-vision review is banned: the learner rejected it twice as too sl
 | "Terms should not be a separate page" | standalone glossary page | terms inline per step, generated from one JSON |
 | "I have to click back to the page every time" | reload-polling hot reload | open the page after each edit instead |
 | "上下区域太大了" | nav wrapping to rows, dock stacking caption above terms | one row each; caption moved into the body |
-| "描述性文字跟普通文字一样" | caption left at body font weight | semibold band with accent border |
+| "描述性文字跟普通文字一样" | caption left at body font weight | speech bubble: border, tail, 16.5 px / 500 |
 | "追问内容占用了主体" | follow-up answer appended to the step flow | `.extra` + `<details>` appendix at the page bottom |
 | connector through a cabinet | straight line between distant nodes, drawn after the nodes | connectors first, elbows outside the container row, `check_svg_overlap.py` |

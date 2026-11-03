@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.0 — 2026-11-03
+
+- New `references/ui-spec.md`: the approved shell (nav, step bubble, figure, cards, appendix, dock), exact numbers, and the table of rejected variants with their replacements.
+- SKILL.md and `html-lessons.md` now point at the spec instead of restating styles that had drifted (tinted band → speech bubble).
+
 ## 1.3.10 — 2026-11-03
 
 - Step caption turned into a plain speech bubble (white, hairline border, small tail pointing at the figure) instead of a tinted band.
