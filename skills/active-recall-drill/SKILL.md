@@ -1,7 +1,7 @@
 ---
 name: active-recall-drill
 description: Quiz learned material with spaced repetition and recall.
-version: 1.2.0
+version: 1.3.0
 author: cnatom, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -30,6 +30,8 @@ Don't use for: explaining a concept for the first time (teach it, then add items
 - Writable data directory. Default `data/reviews.json` under the skill; override with `DRILL_STORE=/abs/path/reviews.json` to keep one store per subject or per device.
 
 ## How to Run
+
+All paths below are relative to this skill directory (where this `SKILL.md` lives); the scripts need no installation and no third-party packages.
 
 ```bash
 python3 scripts/drill.py due --limit 5

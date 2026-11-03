@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0 — 2026-11-03
+
+- Repository layout moved to `skills/active-recall-drill/` so skills.sh can discover and install it: `npx skills add cnatom/active-recall-drill --skill active-recall-drill`.
+- README reduced to the standard shape (features, install, usage, docs, notes, license) in Chinese with an English mirror.
+- SKILL.md states that all paths are relative to the skill directory.
+
 ## 1.2.0 — 2026-11-03
 
 - New: `scripts/i18n.py` message catalog; every CLI message and builder page is available in English and Chinese.

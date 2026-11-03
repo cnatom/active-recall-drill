@@ -12,7 +12,8 @@ import unittest
 from datetime import date, timedelta
 from pathlib import Path
 
-SCRIPT = Path(__file__).resolve().parents[1] / "scripts" / "drill.py"
+SKILL = Path(__file__).resolve().parents[1] / "skills" / "active-recall-drill"
+SCRIPT = SKILL / "scripts" / "drill.py"
 spec = importlib.util.spec_from_file_location("drill", SCRIPT)
 assert spec and spec.loader, f"cannot load {SCRIPT}"
 drill = importlib.util.module_from_spec(spec)

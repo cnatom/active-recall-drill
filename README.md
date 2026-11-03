@@ -1,100 +1,68 @@
 # Active Recall Drill
 
-English | [中文](README.zh-CN.md)
+离线间隔重复复习工具：先出题，等作答，再揭示，按 1/3/7/15/30 天自动排下一次复习。数据是一个本地 JSON 文件，不联网，除 Python 标准库外没有依赖。
 
-A small, offline spaced-repetition tool for people who study with an agent. Ask the question, wait for the answer, reveal, grade — the store then schedules the next review at 1, 3, 7, 15, 30 days. One JSON file, no accounts, no network, no dependencies beyond the Python standard library.
+可作为任意智能体的 Skill 使用，也能当普通命令行工具。
 
-It ships as an [Agent Skill](https://hermes-agent.nousresearch.com/docs) and also works as a plain command-line tool.
+中文 | [English](README.en.md)
 
-## Why another SRS
+## 功能
 
-- **Predict-then-reveal, not flashcard flipping.** `card` shows only the question; the answer is a separate command, so the temptation to peek is a deliberate step.
-- **One file you can read, diff and sync.** `data/reviews.json` is plain JSON with a stable schema (`references/data-model.md`).
-- **Built for agent-driven study.** The skill tells the agent how to score, when to stop adding items, and how to split an item that keeps failing.
+- **先猜后揭**：出题与揭示是两条命令，答案默认不跟着题面出现。
+- **间隔排期**：答对按 1→3→7→15→30 天推进，走完再对一次标记为已掌握；半对退回 1 天，答错重置。
+- **本地数据**：题库是纯 JSON，可读、可 diff、可随网盘同步。
+- **双语**：命令行与课程页面壳支持中英文，默认跟随系统语言，可 `--lang` 覆盖。
+- **课程脚手架**：一个主题生成一门课（课程地图 + 章节页 + 共享样式 + 术语表），不只是一张页面。
 
-## Install
+## 安装
 
-As a Hermes skill:
+通过 skills.sh 安装：
 
-```bash
-git clone <repo-url> ~/.hermes/skills/learning/active-recall-drill
+```sh
+npx skills add cnatom/active-recall-drill --skill active-recall-drill
 ```
 
-As a standalone CLI, clone anywhere and run:
+需要 Node.js / npx 执行安装命令；运行只需 Python 3.9+，没有第三方包。
 
-```bash
-python3 scripts/drill.py --help
+也可以直接克隆当 CLI 用：
+
+```sh
+git clone https://github.com/cnatom/active-recall-drill
+python3 active-recall-drill/skills/active-recall-drill/scripts/drill.py --help
 ```
 
-Set `DRILL_STORE` to keep separate stores, e.g. `DRILL_STORE=~/notes/networking.json`.
+## 使用
 
-## Usage
+安装后直接对智能体说：
 
-```bash
-# add three facts studied today
-python3 scripts/drill.py add --topic networking/subnetting \
-  --question "Do 10.0.1.5 and 10.0.2.7 share a subnet under /24?" \
-  --answer "No. /24 fixes the first three octets; 10.0.1 differs from 10.0.2." \
-  --source "Kurose & Ross, ch. 4"
+> 考我今天该复习的题。
 
-# daily loop
+> 把这段内容做成 5 道复习题。
+
+> 帮我为这个主题建一门课。
+
+手动用时：
+
+```sh
 python3 scripts/drill.py due --limit 5
 python3 scripts/drill.py card 1
 python3 scripts/drill.py reveal 1
 python3 scripts/drill.py grade 1 --result right
-python3 scripts/drill.py stats
 ```
 
-Bulk import accepts either a JSON array or `{"items": [...]}`; see `examples/items.sample.json`.
+多个题库用 `DRILL_STORE=/path/reviews.json` 分开。
 
-## Scheduling
+## 文档
 
-| Result | Next review |
-|---|---|
-| right | 1 → 3 → 7 → 15 → 30 days, then mastered |
-| partial | +1 day, streak reset |
-| wrong | +1 day, interval reset, lapse counted |
+- [数据模型](skills/active-recall-drill/references/data-model.md)
+- [课程形态](skills/active-recall-drill/references/course-layout.md)
+- [单页教学页规范](skills/active-recall-drill/references/html-lessons.md)
+- [教学风格](skills/active-recall-drill/references/teaching-style.md)
 
-Mastered items stop appearing in `due`. Rules live in `scripts/drill.py` (`INTERVALS`, `MASTERED_STREAK`).
+## 使用须知
 
-## Data
-
-```
-data/reviews.json     the store (created on first add)
-data/notes/<topic>.md one dated line per session takeaway
-```
-
-`data/` is git-ignored. Everything stays local; nothing is uploaded.
-
-## Extras
-
-- `scripts/new_course.py <dir> --title "..." --chapters "A,B,C"` — scaffold a multi-chapter HTML course (map, chapter pages, shared assets, empty terms file). See `references/course-layout.md`.
-- `scripts/build_index.py <dir>` — entry page for a folder of HTML lessons.
-- `scripts/build_glossary.py <terms.json>` — standalone searchable glossary.
-- `scripts/build_terms.py <terms.json>` — converts terms to `assets/terms-data.js` so lessons work from `file://`.
-- `templates/lesson-page.html` — lesson skeleton; conventions in `references/html-lessons.md`.
-- `references/teaching-style.md` — an opinionated one-to-one teaching style (Chinese) for zero-background learners.
-
-## Tests
-
-```bash
-python3 -m unittest discover -s tests -v
-python3 scripts/drill.py selftest
-```
-
-## 中文
-
-一个离线间隔重复工具：先出题、等作答、再揭示、评分，之后按 1/3/7/15/30 天自动排下一次复习。数据是一个 JSON 文件，不上传、不依赖第三方库。
-
-```bash
-python3 scripts/drill.py due --limit 5     # 今天该复习什么
-python3 scripts/drill.py card 1            # 只出题面
-python3 scripts/drill.py reveal 1          # 作答后再揭示
-python3 scripts/drill.py grade 1 --result right
-```
-
-CLI 输出为英文，便于脚本与跨语言使用；数据字段同样为英文。教学风格说明见 `references/teaching-style.md`，页面写法见 `references/html-lessons.md`。
+数据只存在本地，不上传、不调模型判分；判分由使用者或智能体对照答案完成。
 
 ## License
 
-MIT. See `LICENSE`.
+[MIT](LICENSE). Copyright 2026 cnatom.
