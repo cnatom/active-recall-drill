@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.9.1 — 2026-11-03
+
+- Term search is a non-modal popover anchored bottom-right: no backdrop, the page stays readable and clickable; clicking outside closes it.
+
 ## 1.9.0 — 2026-11-03
 
 - Global term search on every page: floating `术语 ⌘K` button, overlay with input and results, `/` or ⌘K to open, Enter for the first hit, Esc to close, link to the glossary page; step/chapter arrow shortcuts are suppressed while it is open.

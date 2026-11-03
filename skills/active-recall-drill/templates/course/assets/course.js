@@ -254,6 +254,11 @@
 
     fab.onclick = openPanel;
     overlay.addEventListener('click', e => { if (e.target === overlay) closePanel(); });
+    document.addEventListener('click', e => {
+      if (!overlay.classList.contains('open')) return;
+      if (overlay.contains(e.target) || fab.contains(e.target)) return;
+      closePanel();
+    });
     input.addEventListener('input', draw);
     input.addEventListener('keydown', e => {
       if (e.key === 'Enter' && list[0]) openTerm(list[0].abbr);

@@ -172,20 +172,20 @@ button.on { background: var(--accent-soft); border-color: var(--accent); color: 
 }
 .term-fab:hover { border-color: var(--accent); color: var(--accent); }
 .term-overlay {
-  position: fixed; inset: 0; z-index: 70; display: none;
-  background: rgba(22,24,29,.28); backdrop-filter: blur(2px);
+  position: fixed; inset: 0; z-index: 70; display: none; pointer-events: none;
 }
 .term-overlay.open { display: block; }
 .term-panel {
-  width: min(640px, calc(100vw - 40px)); margin: 90px auto 0;
-  background: #fff; border: 1px solid var(--line); border-radius: 14px;
-  box-shadow: 0 18px 50px rgba(22,24,29,.18); overflow: hidden;
+  pointer-events: auto; position: absolute; right: 18px; bottom: 128px;
+  width: min(380px, calc(100vw - 32px));
+  background: #fff; border: 1px solid var(--line); border-radius: 12px;
+  box-shadow: 0 12px 34px rgba(22,24,29,.16); overflow: hidden;
 }
 .term-panel input {
   width: 100%; border: 0; border-bottom: 1px solid var(--line);
   padding: 14px 16px; font: inherit; font-size: 15px; outline: none;
 }
-.term-results { max-height: 46vh; overflow-y: auto; }
+.term-results { max-height: 38vh; overflow-y: auto; }
 .term-item { padding: 10px 16px; border-bottom: 1px solid #f1f3f6; cursor: pointer; }
 .term-item:hover { background: #f7f6fd; }
 .term-item .a { font: 600 14px ui-monospace, Menlo, monospace; }
