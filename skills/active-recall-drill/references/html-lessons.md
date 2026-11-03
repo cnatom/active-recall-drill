@@ -45,23 +45,14 @@ Every step's visible state is a factual claim. Check it against the real mechani
 
 - Do not build screenshot-plus-vision review loops for every iteration; read the DOM while iterating. **One rendered look is still required before delivery** — see next section.
 
-## Self-check before delivery
+## Order of operations: open first, verify second
 
-A page once shipped with a connector running straight through a cabinet box: every DOM assertion passed, and the learner found it on first look. Geometry is not logic; check it separately.
+The learner wants to see the new state immediately, and does not want to wait for the teacher's self-review. So the order is fixed:
 
-1. **Geometry** — run `python3 scripts/check_svg_overlap.py page.html [--allow l0,...]`. It samples every `line`/`path` that has an `id` against the node rects and must print `no collisions`. Put genuinely internal leads (server → switch inside a cabinet) in `--allow`.
-2. **One rendered look** — screenshot the worst step and inspect it once:
-
-```bash
-"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu \
-  --hide-scrollbars --window-size=1400,1200 --virtual-time-budget=2500 \
-  --screenshot=/tmp/page.png "file:///abs/path/page.html?step=4"
-```
-
-   Look for: connectors crossing boxes, text spilling out of a rect, overlapping labels, clipped elements, a line covering a node label.
-3. **Steps** — dump `?step=0` and `?step=<last>` and confirm `#msg` and the highlighted group match the intended step.
-
-Drawing order is part of the fix: connectors must appear **before** the node `<g>` groups in the SVG, so boxes paint over lines. A cable that must pass a neighbouring node is routed as an elbow outside the container row (above or below), never as a straight diagonal through it.
+1. **Edit** the page.
+2. **Open it right away** (`open <file>`), before any check runs. One sentence in chat says what changed.
+3. **Then verify**: `python3 scripts/check_svg_overlap.py page.html [--allow l0,...]` (must print `no collisions`), one headless screenshot inspected for text spill and overlaps, and a DOM check of the first and last `?step=N`.
+4. **Fix silently and reopen** if anything failed; report the fix in one line. Do not hold the page back until the checks pass — the learner is reading while the checks run.
 
 ## Opening pages and data on file://
 

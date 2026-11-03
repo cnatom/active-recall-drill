@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.4 — 2026-11-03
+
+- Delivery order fixed: edit → open immediately → then run the overlap check, one rendered look and step assertions; fix and reopen silently when a check fails.
+
 ## 1.3.3 — 2026-11-03
 
 - New: `scripts/check_svg_overlap.py` — samples every connector against node rects and fails on collisions; run before opening a page.

@@ -1,7 +1,7 @@
 ---
 name: active-recall-drill
 description: Quiz learned material with spaced repetition and recall.
-version: 1.3.3
+version: 1.3.4
 author: cnatom, Hermes Agent
 license: MIT
 platforms: [linux, macos, windows]
@@ -116,8 +116,7 @@ Conventions (details in `references/course-layout.md`):
 - One concept per page. A follow-up question patches the chapter it belongs to; a genuinely new concept becomes a new chapter, not a new page beside the course.
 - Every page: title + one-line lead, diagram with a fixed side table, previous/next/restart, one-line caption per step (≤ 25 words), terms for the current step, chapter pager.
 - All pages share `assets/`; never fork the stylesheet per chapter.
-- Open with `file://` after each edit. No reload polling, no local server.
-- Before delivering a page: `scripts/check_svg_overlap.py` must print `no collisions`, then take one screenshot and look at it for overlaps, clipped text and connectors through boxes. Draw connectors before node groups so boxes cover lines; route cables that pass a neighbour as elbows outside the row.
+- Open with `file://` after each edit. No reload polling, no local server. Open first, verify second: the learner reads the change while `check_svg_overlap.py` and the screenshot check run; fix and reopen silently if they fail.
 
 ## After the learner finishes a course
 
