@@ -1,3 +1,4 @@
+:root { --toc-w: 196px; }
 :root {
   --ink: #16181d;
   --body: #38404a;
@@ -26,7 +27,7 @@ a:hover { text-decoration: underline; }
 .wrap { max-width: 1080px; margin: 0 auto; padding: 0 26px 56px; }
 
 /* 左侧垂直课程导航 */
-body { padding-left: 408px; }
+body { padding-left: calc(212px + var(--toc-w, 196px)); }
 .cnav {
   position: fixed; top: 0; bottom: 0; left: 0; width: 212px; z-index: 20;
   background: #fbfbf9; border-right: 1px solid var(--line);
@@ -64,7 +65,7 @@ body { padding-left: 408px; }
 
 /* 二级目录：课程地图右侧，一级分组 + 二级章节 */
 #tocnav {
-  position: fixed; top: 0; bottom: 0; left: 212px; width: 196px; z-index: 19;
+  position: fixed; top: 0; bottom: 0; left: 212px; width: var(--toc-w, 196px); z-index: 19;
   background: #fff; border-right: 1px solid var(--line); overflow-y: auto;
 }
 .tocinner { padding: 16px 10px 24px; }
@@ -83,13 +84,22 @@ body { padding-left: 408px; }
 .tocitem:hover { background: #f4f5f7; text-decoration: none; }
 .tocitem.done { color: var(--green); }
 .tocitem.cur { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
-.dock { left: 408px; }
+.dock { left: calc(212px + var(--toc-w, 196px)); }
 @media (max-width: 1200px) { #tocnav { display: none; } }
 @media (min-width: 901px) and (max-width: 1200px) {
   body { padding-left: 212px; }
   .dock { left: 212px !important; }
 }
 
+
+.toctoggle {
+  margin: 12px 8px 0; padding: 5px 8px; font-size: 12px; color: var(--muted);
+  background: #f4f5f7; border: 0; border-radius: 6px; cursor: pointer; text-align: left;
+}
+.toctoggle:hover { background: #eceef1; color: var(--ink); }
+#tocnav { transition: width .2s ease, opacity .15s ease; }
+body.toc-collapsed { --toc-w: 0px; }
+body.toc-collapsed #tocnav { opacity: 0; border-right: 0; }
 /* 页头 */
 header.page { padding: 18px 0 4px; }
 .kicker { font-size: 12.5px; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; }

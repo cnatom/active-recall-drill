@@ -88,6 +88,38 @@
             return `<a class="${cls}" href="${ROOT}${c.file}">${c.num} ${c.title}</a>`;
           }).join('') + `</nav></details>`;
       }).join('') + `</div>`;
+    // 目录可收起，分组可伸展
+    const TOC_KEY = 'course-toc-collapsed';
+    const tocBtn = document.createElement('button');
+    tocBtn.className = 'toctoggle';
+    tocBtn.type = 'button';
+    const syncTocBtn = () => {
+      const collapsed = document.body.classList.contains('toc-collapsed');
+      tocBtn.textContent = collapsed ? '目录 ›' : '‹ 收起目录';
+      tocBtn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    };
+    if (localStorage.getItem(TOC_KEY) === '1') document.body.classList.add('toc-collapsed');
+    tocBtn.onclick = () => {
+      document.body.classList.toggle('toc-collapsed');
+      localStorage.setItem(TOC_KEY, document.body.classList.contains('toc-collapsed') ? '1' : '0');
+      syncTocBtn();
+      applyTocState();
+    };
+    navHost.querySelector('.inner').appendChild(tocBtn);
+    syncTocBtn();
+
+    const applyTocState = () => {
+      const wide = window.innerWidth > 1200;
+      const on = wide && document.body.classList.contains('toc-collapsed');
+      toc.style.width = on ? '0px' : '';
+      toc.style.opacity = on ? '0' : '';
+      toc.style.borderRight = on ? '0' : '';
+      document.body.style.paddingLeft = on ? '212px' : '';
+      const dock = document.querySelector('.dock');
+      if (dock) dock.style.left = on ? '212px' : '';
+    };
+    applyTocState();
+    window.addEventListener('resize', applyTocState);
     // 鼠标停在章节列表上时，垂直滚轮改为横向滚动
     const pillsEl = navHost.querySelector('.pills');
     if (pillsEl) {

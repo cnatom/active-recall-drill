@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.13.0 — 2026-11-04
+
+- 目录栏可收起：模块列表下方的 `收起目录 / 目录 ›` 按钮把二级目录收成 0 宽，状态记在 localStorage，内容区与底栏同步回移。
+- 一级分组用原生 `<details>` 展开、收起，当前组默认打开。
+
 ## 1.12.1 — 2026-11-04
 
 - Fix breakpoint order: the 目录 rail hides at 1200 px and below, the dock offset drops to 212 px on medium screens and 0 below 900 px.
