@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.20.0 — 2026-11-04
+
+- Every chapter now ships a `生活中的样子` analogy figure.
+- Hover linking shows an inline hint in the points rail so the interaction is discoverable.
+
 ## 1.19.0 — 2026-11-04
 
 - `hover-points.js` binds each `.stage` to its own points list, so merged pages keep independent highlighting.

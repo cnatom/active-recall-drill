@@ -103,6 +103,8 @@ body.toc-collapsed #tocToggle { right: 4px; }
 .part { margin: 36px 0 6px; padding-top: 22px; border-top: 1px solid var(--line); font-size: 17px; }
 .partlead { margin: 0 0 10px; color: var(--body); font-size: 14px; }
 
+.hoverhint { font-size: 11.5px; color: var(--muted); margin: 0 0 6px; }
+
 /* 页头 */
 header.page { padding: 18px 0 4px; }
 .kicker { font-size: 12.5px; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; }

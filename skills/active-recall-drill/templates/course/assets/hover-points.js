@@ -13,6 +13,16 @@
     if (!svg || !items.length) return;
     var shapes = Array.prototype.slice.call(svg.querySelectorAll('[data-p]'));
 
+    if (shapes.length) {
+      var side = stage.querySelector('.side');
+      if (side && !side.querySelector('.hoverhint')) {
+        var hint = document.createElement('div');
+        hint.className = 'hoverhint';
+        hint.textContent = '鼠标停在图上，右侧对应要点会亮';
+        side.insertBefore(hint, side.firstChild);
+      }
+    }
+
     function clear() {
       items.forEach(function (li) { li.classList.remove('hot', 'dim'); });
       shapes.forEach(function (el) { el.classList.remove('ph'); });
