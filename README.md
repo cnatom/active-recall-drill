@@ -24,7 +24,7 @@ npx skills add cnatom/active-recall-drill
 
 ```sh
 git clone https://github.com/cnatom/active-recall-drill
-python3 active-recall-drill/skills/active-recall-drill/scripts/drill.py --help
+python3 skills/active-recall-drill/scripts/drill.py --help
 ```
 
 ## 用法
@@ -55,6 +55,8 @@ skills/active-recall-drill/
 ├── scripts/build_*.py    入口页、术语表、术语数据
 ├── references/           数据模型、课程形态、页面规范、教学风格
 └── templates/            单页与整门课的 HTML 模板
+tests/                    标准库单元测试
+.github/workflows/        CI
 ```
 
 ## 要求

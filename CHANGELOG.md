@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.11.0 — 2026-11-04
+
+- Packaged for the Agent Skills layout: repo root keeps README, LICENSE, CHANGELOG and `tests/`, the installable skill lives at `skills/active-recall-drill/`.
+- `SKILL.md` frontmatter follows the agentskills.io spec (name, description, license, compatibility, string author/version); run section states that paths are relative to the skill directory.
+- Readme split into Chinese primary `README.md` and `README.en.md`; install entry is `npx skills add cnatom/active-recall-drill`.
+- Tests moved to the repo root and resolve the skill through `skills/*/scripts`.
+
+## 1.10.0 — 2026-11-04
+
+- Course shell is step-free: one complete figure per page, numbered points beside it in the right rail, no `?step` state or click-through fragments.
+- Hover linking (`assets/hover-points.js`): a `data-p` figure part highlights its point and dims the rest; numbers are not printed on the figure.
+- Term coverage is a hard gate: `scripts/check_terms.py` fails on any abbreviation missing from `术语.json`, and `showTerms` auto-collects ASCII terms found in the page.
+- Layout rules: `.fig` and `.side` split with field tables in `.tables`; column heights must be balanced within ~150 px.
+- Architecture pages reproduce reference diagrams in full and add an end-to-end business flow with failure/rollback notes.
+
 ## 1.9.3 — 2026-11-03
 
 - Collision checker treats any box wider or taller than 250 units as a container band, so layered backgrounds no longer report false positives.

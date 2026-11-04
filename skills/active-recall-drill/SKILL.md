@@ -1,14 +1,13 @@
 ---
 name: active-recall-drill
-description: Quiz learned material with spaced repetition and recall.
-version: 1.9.3
-author: cnatom, Hermes Agent
+description: Drill recall and build visual courses from notes.
+version: 1.11.0
+author: cnatom
 license: MIT
-platforms: [linux, macos, windows]
+compatibility: Python 3.9+ with the standard library; any agent that can run shell commands.
 metadata:
-  hermes:
-    tags: [learning, spaced-repetition, recall, quiz]
-    related_skills: [teach]
+  tags: [learning, spaced-repetition, recall, quiz, course]
+  related_skills: [teach]
 ---
 
 # Active Recall Drill
@@ -26,6 +25,7 @@ Don't use for: explaining a concept for the first time (teach it, then add items
 ## Prerequisites
 
 - Python 3.9+, standard library only.
+- All paths below are relative to this skill directory, whatever directory the agent installed it into.
 - Output language: system locale by default; override with `--lang zh|en` or `DRILL_LANG`. `--json` keys stay English.
 - Writable data directory. Default `data/reviews.json` under the skill; override with `DRILL_STORE=/abs/path/reviews.json` to keep one store per subject or per device.
 
@@ -81,7 +81,7 @@ Mastered items are never scheduled again and are skipped by `due`. Grading a mas
 ## Localization
 
 - CLI and generated page chrome exist in English and Chinese (`scripts/i18n.py`, `assets/i18n.js`); add a language by adding one key to both tables.
-- Course content is authored in one language. Only the shell (buttons, labels, step counter, map states) switches.
+- Course content is authored in one language. Only the shell (buttons, labels, map states) switches.
 - `README.md` is Chinese and `README.en.md` mirrors it; references and SKILL.md stay English-only to keep instruction density high.
 - Page language resolution order: saved choice in `localStorage` → `window.__COURSE_LANG` from the scaffold → `navigator.language`.
 
@@ -96,7 +96,15 @@ Mastered items are never scheduled again and are skipped by `due`. Grading a mas
 
 ## Teaching Discipline (optional)
 
-`references/teaching-style.md` holds an opinionated classroom style: diagnose before teaching, one concept per step, progressive disclosure, predict-then-reveal only for partially known material, and a strict accuracy rule for numbers and device roles. Load it when actually teaching; the mechanics above work without it.
+`references/teaching-style.md` holds an opinionated classroom style: diagnose before teaching, one concept per page, progressive disclosure (now: one complete figure plus points ordered 由浅入深), predict-then-reveal only for partially known material, and a strict accuracy rule for numbers and device roles.
+
+A single concept question gets one or two sentences naming the distinguishing mechanism; detail belongs on the page or in the note, not in chat. When the learner asks for a term definition mid-course, answer that short and then patch the page if the page itself was unclear.
+
+Answer category first. When the question is "what IS this, a concept, a device or a protocol", the first sentence classifies it (architecture, protocol, device, role) and gives the one test that decides membership, then the parts. A component list before the category leaves the learner unable to place the term and asking again.
+
+Assume no telecom background even though the learner works at a carrier. Expand every acronym at first use in the lead, keep one name per object, and prefer the everyday word over the standards word (`插头` before `收发器`). Only the term card carries the formal name.
+
+Load `references/teaching-style.md` when actually teaching; the mechanics above work without it.
 
 ## New Subject → New Course (default for fresh material)
 
@@ -114,18 +122,23 @@ Conventions (details in `references/course-layout.md`):
 - Start with 5 to 7 chapters; `00` is always the map. That count is a ceiling on what is taught at once, not a cap on the course: a production system grows to 10-15 chapters along the coverage chain in `references/course-layout.md` (roles → physical → redundancy → how services attach → isolation → addressing/numbering → real topology → management plane → operations → automation). Add in role order instead of explaining the missing link in chat, keep one concept per chapter, and never let two chapters carry the same title after a reorder.
 - For any subject with hardware — networks, servers, data centres — one chapter is physical: racks, which box sits where, how many cables per server, uplink speeds, A/B zones. Logical chapters alone leave "why two NICs, why two switches" unanswerable, and a quiz on device roles then fails even though every logical page was read. Place the physical chapter right after the role chapter and before any device-role quiz.
 - One concept per page. A follow-up question patches the chapter it belongs to; a genuinely new concept becomes a new chapter, not a new page beside the course.
-- Every page: title + one-line lead, the step caption as a plain speech bubble directly above the diagram (white, hairline border, small tail pointing down; 16.5 px, weight 500 — not a tinted band, not body copy), diagram with a fixed side table, one-row dock at the viewport bottom (previous/next/restart, counter, term chips, `复制上下文`), chapter pager. Both nav and dock stay one row; pills scroll horizontally on a vertical wheel; `←/→` step, `↑/↓` change chapter; the body reserves `dock height + 18px`. Full contract and rejected variants: `references/ui-spec.md`.
-- Terms live in `术语.json` and each step shows only the two or three it needs. Every page also gets a global term search: a floating `术语 ⌘K` button opens an overlay with an input and result list (`/` or ⌘K anywhere, Enter opens the first hit, Esc closes), and the arrow-key step/chapter shortcuts are suppressed while it is open. A standalone glossary page is allowed when the learner wants to memorise them: cards with the abbreviation always visible and independent toggles for the English full name and the Chinese explanation (`遮住英文`, `遮住中文`, `只看缩写` hides both), a card click revealing what is masked, plus `全部遮住/翻开`, `随机一张` and search. Link it from the nav as its own pill; it stays outside the chapter sequence.
+- Every chapter carries one visual analogy: a small SVG scene labelled `生活中的样子`, placed under the technical figure and above the dock, mapping the mechanism to an everyday scene (traffic control centre, building floors, courier parcel, two gatekeepers). It is a picture, not a paragraph: the learner with zero telecom background should be able to retell the mechanism from the scene plus one caption line. Keep diagram labels plain function words, put the acronym in the term card, and never put a number or device name in the analogy that the step does not also show.
+- A page that explains an architecture also needs the end-to-end flow: from the top-level system that raises the request (OSS/portal) through every layer to the workload running, then the result and alarms travelling back. Draw the sequence as a U-shaped chain of labelled boxes in one figure, and follow it with one line per step plus what happens on failure and rollback.
+- If the learner supplies a reference architecture (a vendor or 集团 slide), reproduce every module, layer and interface label from it. A simplified "essence" diagram reads as cutting corners and will be rejected; draw the full stack, keep interface labels legible with a white halo (`paint-order: stroke`), and let the numbered points do the explaining.
+- Never hide, fade or grey out parts of the figure to stage a story. The learner reads the whole picture first and found the fragments hard to reassemble; every box, label and connector stays visible from step 0. Cross-highlighting replaces steps: each figure part carries `data-p="1"` (or `data-p="2,5"`) and `assets/hover-points.js` lets hovering that part light its numbered point while the other points drop to about 35 % opacity but stay legible; leaving the figure restores every point to full opacity, and hovering a point mirrors the highlight on the figure. Do not print the numbers on the figure itself: the circled numbers live only in the right-rail points list. The points sit beside the figure, never far below it. If a mechanism really is sequential (encapsulation, failure and failover), draw the sequence as labelled frames side by side in one figure.
+- Every page: title + one-line lead, one complete figure (nothing hidden, no per-step dimming), a numbered points list beside the figure in the right rail with every point visible at once and ordered 由浅入深, then the note, the `生活中的样子` analogy figure, and the term chips. The stage is two columns: `.fig` holds the SVG and nothing else, `.side` holds only the points list. Field tables go in a full-width `.tables` block below the stage; when the points rail is taller than the figure, they move to the foot of the `.fig` column instead. Either way, neither column may be left with a few hundred pixels of empty space — measure `.fig` and `.side` heights after any layout edit and rebalance until the gap is under ~150 px. No step controls and no `?step` state: the learner must not click through fragments. Dock carries the term chips and `复制上下文` only; chapter switching stays on the pager and `↑/↓`. Full contract and rejected variants: `references/ui-spec.md`; converting a legacy step-based course: `references/course-layout.md` → Converting to step-free.
+- Terms are a hard gate, not a nicety: every abbreviation that appears in a page's visible text must already have a card in `术语.json`. Add it in the same edit that introduces it, rerun `build_terms.py`, then run `python3 scripts/check_terms.py <course-dir>` and do not finish while it exits non-zero. `showTerms` auto-appends every ASCII term it finds in the page, so a missing card shows up as a blank chip; Chinese term keys still have to be passed explicitly.
+- Terms live in `术语.json`; a step-free page shows its whole term set as chips through one `showTerms('tchips', [...])` call after `course.js`. After adding or editing pages run `python3 scripts/check_terms.py <course-dir>`; it diffs every page's `terms:` array against the JSON and exits non-zero on a key that has no card. Every page also gets a global term search: a floating `术语 ⌘K` button opens an overlay with an input and result list (`/` or ⌘K anywhere, Enter opens the first hit, Esc closes), and the arrow-key chapter shortcuts are suppressed while it is open. A standalone glossary page is allowed when the learner wants to memorise them: cards with the abbreviation always visible and independent toggles for the English full name and the Chinese explanation (`遮住英文`, `遮住中文`, `只看缩写` hides both), a card click revealing what is masked, plus `全部遮住/翻开`, `随机一张` and search. Link it from the nav as its own pill; it stays outside the chapter sequence.
 - Follow-up material produced while answering questions goes into a `.extra` section at the bottom inside `<details>`, never into the main step flow or the chapter list; the chapter sequence stays what it was when the course was designed.
 - All pages share `assets/`; never fork the stylesheet per chapter.
-- Open with `file://` after each edit. No reload polling, no local server. Open first, verify second with `check_svg_overlap.py` plus DOM step checks; never a screenshot-plus-vision pass.
+- Open with `file://` after each edit. No reload polling, no local server. Open first, verify second with `check_svg_overlap.py` plus DOM checks of the points list and chips. Shell geometry is checked by pixel sampling, never by a vision pass; one vision read of a dense figure for label legibility is allowed under Verification.
 
 ## Knowing which chapter the learner is on
 
 No daemon and no file access: the page cannot write to disk from `file://`, and both a recorder server and a file-picker sync were rejected as inelegant.
 
-- The bottom dock carries a `复制上下文` button. It copies a short block — current chapter, file, step, chapters already visited, timestamp — to the clipboard so the learner can paste it into the chat.
-- When such a block arrives, treat it as authoritative for this turn: resume from that chapter and step, and do not ask again which page they are reading.
+- The bottom dock carries a `复制上下文` button that copies a short block for pasting into the chat. Exact shape, no step line: `【课程进度】`, then `当前：<num> <title>（<file>）`, then `进度：已看过 N / M 章` (M excludes the map page), then `已看过：` followed by indented lines of four chapters each (`  01 …、02 …、03 …、04 …`), then `时间：YYYY-MM-DD HH:MM`. Long chapter lists on one line are unreadable in chat; wrapping four per line is the accepted format.
+- When such a block arrives, treat it as authoritative for this turn: resume from that chapter, and do not ask again which page they are reading.
 - Without a pasted block there is no signal; ask instead of guessing. Never claim to watch the screen, and do not reintroduce a background recorder or a full-screen overlay without an explicit request.
 
 ## After the learner finishes a course
@@ -137,9 +150,21 @@ A blank answer after "I read every page" is a content gap, not a memory gap. Han
 3. Re-test that item on the next scheduled day, not immediately after teaching; the scheduler already carries it.
 4. If the learner names several related terms as unknown (`EMS MANO NFVO VNFM VIM`), treat them as one chain and teach the chain once, top-down, instead of five separate definitions.
 
+## Change requests on a running course
+
+Learners take these courses chapter by chapter, and they usually ask for a small concrete change long before they have read every page. Their reading position lives only in their own browser `localStorage`, so never assume a chapter has been seen.
+
+- Do exactly what was asked, at the size asked. "Move the directory" means move the directory: no module split, no renumbering, no page plan attached.
+- Scope the course to what the learner asked about or handed over. Every chapter must trace to a question they asked or a file they supplied; the remaining sections of a spec, a course number, or a syllabus is not a mandate to build pages. A large unread map is not progress, and this learner will say so.
+- When growth is explicitly asked for, split the directory into modules first (recipe in `references/course-layout.md`), then add only the new chapters. Do not bundle content expansion, renumbering and page rewrites into one change.
+- Do not answer a one-line request with a roadmap. Module tables, target page counts, priorities and phases for material the learner has not opened yet are noise, not planning. Expansion is proposed when they ask for new content or report finishing the current sequence, and then one module at a time.
+- A relocation is a whole-directory move. Every page and the terms data use relative paths (`assets/…`, `术语.json`), so move the folder as a unit, change nothing inside, headless-dump one page to confirm `assets/` still resolves, then update the single index line that names the old path.
+- When a layout or interaction change is meant as a convention rather than a one-off tweak, backport it in the same pass: a running course's `assets/course.css` and `course.js` are copies of `templates/course/assets/`, so edit the template and `references/ui-spec.md` (plus `course-layout.md` when navigation or file layout changes), then commit and push the skill repo. A convention left only in the course diverges on the next scaffold and the learner has to ask for it again.
+- Renaming, renumbering and relocating are three separate operations. Combining them turns a one-command move into a multi-file rewrite and breaks the `localStorage` progress ids keyed on `data-chapter`.
+
 ## Lesson Pages (optional, single page)
 
-`references/ui-spec.md` is the visual contract: nav, step bubble, figure, dock, appendix, with the rejected variants and their replacements. `references/html-lessons.md` covers the mechanics: skeleton, progressive steps, field tables, fast animation, `?step=N` assertions, the `file://` JSON pitfall, and the pre-delivery geometry check. Start from `templates/lesson-page.html`; `scripts/build_index.py` builds an entry page and `scripts/build_terms.py` turns a terms JSON into a `<script>`-loadable data file.
+`references/ui-spec.md` is the visual contract: left rail, one complete figure, numbered points list, visual analogy, dock, appendix, with the rejected variants and their replacements. `references/html-lessons.md` covers the drawing mechanics: skeleton, field tables, fast animation, the `file://` JSON pitfall, and the pre-delivery geometry check (its step-array sections describe the legacy shell). Start from `templates/lesson-page.html`; `scripts/build_index.py` builds an entry page and `scripts/build_terms.py` turns a terms JSON into a `<script>`-loadable data file.
 
 ## Pitfalls
 
@@ -148,15 +173,22 @@ A blank answer after "I read every page" is a content gap, not a memory gap. Han
 - **Due dates are local calendar days.** A learner crossing timezones may see items a day early or late; migrate data deliberately rather than switching to UTC ad hoc.
 - **Double grading.** One grade per review; re-running `grade ... right` on a mastered item is ignored.
 - **Import needs all three fields.** Every row requires `topic`, `question`, `answer`.
-- **A step's picture is a factual claim.** Verify each step's fields against the real mechanism in both directions; a wrong state (e.g. a transit tag left on the payload at delivery) teaches the inverse model and the learner spots it before you do.
-- **A term chip renders empty when the key is missing from `术语.json`.** Adding a chapter that uses new terms requires adding those entries and rerunning `build_terms.py`; otherwise the row is blank and looks broken.
+- **A figure's state is a factual claim.** Verify every drawn field against the real mechanism in both directions; a wrong state (e.g. a transit tag left on the payload at delivery) teaches the inverse model and the learner spots it before you do.
+- **A term chip renders empty when the key is missing from `术语.json`.** Adding a chapter that uses new terms requires adding those entries and rerunning `build_terms.py`; otherwise the row is blank and looks broken. Check every page, not just the one you edited: a chip added in an earlier pass goes unnoticed until the learner opens that page, so run `scripts/check_terms.py <course-dir>` before delivery.
+- **Stacked labels teach neither name.** A diagram box labelled `vSwitch（VTEP）` assumes the learner already knows one of the two terms; a non-telecom learner reads it as one confusing object and asks what it means. Label the box with its plain function (`软件交换机，负责封包与拆包`) and leave the acronym to the term chip and glossary. Same rule for prose: never introduce two names for one box in the same sentence.
 - **Two abbreviations with near-identical localized names teach each other's meaning.** `EMS` (Element Management System) and `VNFM` (VNF Manager) both read as "网元管理…"; a learner who says "the element manager" may mean either. When such a pair appears, one term card must contrast them in a line (EMS governs a running element's config and alarms; VNFM creates and scales the element), and an answer that swaps the names is `partial`.
+- **When the learner says two terms are indistinguishable, teach the contrast, not the definitions.** Give each word the object it changes (`SDN defines the network's path; NFV virtualizes the device`), add one points-list item that states the contrast and one callout on the figure, and add two or three drill items. Longer prose in chat is the failure mode: they already read the page once and forgot it, so the fix is a shorter hook plus a scheduled recall, not more explanation.
 - **A logical-roles course introduces no physical referents.** After chapters on VLANs, gateways and routing, the learner can still be unable to answer "why two NICs per server, why two switches". That is a coverage gap, not a memory gap: add the physical chapter described under course conventions, then quiz.
-- **A mechanism chapter needs a failure step, not just a description.** When a component exists to survive something (escape port, peer-link, standby gateway), a card saying "used when the uplink fails" does not teach why it is needed. Add one step where the failure is marked on the figure and one where the traffic visibly leaves through the mechanism; the learner's question "what triggers it, why is it necessary" is the signal that the description alone failed.
-- **SVG paints in document order.** A connector written after the node groups covers the boxes it crosses, and a straight line between two distant nodes cuts through whatever sits between them. Put connectors first, route elbows around containers, and run the overlap check before opening the page.
+- **A mechanism chapter needs a failure frame, not just a description.** When a component exists to survive something (escape port, peer-link, standby gateway), a card saying "used when the uplink fails" does not teach why it is needed. Since pages are step-free, draw the normal frame and the failed frame side by side in the one figure, with the traffic visibly leaving through the mechanism; the learner's question "what triggers it, why is it necessary" is the signal that the description alone failed.
+- **SVG paints in document order.** A connector written after the node groups covers the boxes it crosses, and a straight line between two distant nodes cuts through whatever sits between them. Put connectors first, route elbows around containers, and run the overlap check before opening the page. The moving dot is a node too: a coordinate that reads as "inside the box" usually lands on a label baseline and hides a line of text, so park it on empty canvas or below the box.
+- **Scripted HTML restructuring silently drops wrappers.** Moving blocks across a batch of pages (tables out of the rail, SVG into a `.fig`) with regex or index slicing can leave out the opening `<div class="stage">`, close a parent early, or eat the `.note` block; the page still renders, so only a later measurement or the learner sees a missing section. After any batch rewrite, assert every page has balanced `<div>`/`</div>` counts, the expected `.stage`/`.fig`/`.side` counts, and that `.note`, `.terms` and `.pager` still resolve with `.wrap` as parent; then measure column heights.
+- **Chapter numbers live in `course-data.js`, not in filenames.** A reorder rewrites `num` and the array order but keeps file names, so `第 05 章` can sit in `ch08.html`. Read the sequence from the data array, never from a filename sort; do not "fix" the names during an unrelated change, and never delete a page as a duplicate because two numbers look swapped.
 
 ## Verification
 
+- Layout changes: screenshot at a fixed viewport (`--headless --window-size=1440,900 --screenshot=…`) and sample pixels with PIL instead of opening the page or a vision pass. Check the rail background at `(150, 400)`, the 1 px border column at `x=211`, content background at `(220, 400)`, and the dock offset at `(100, 880)` versus `(400, 880)`. A wrong rail width, a dock still starting at 0, or content sliding under the rail shows up as a pixel mismatch; this caught three layout states before delivery.
+- Hover linking: dispatch a synthetic `mouseover` on one `[data-p]` shape and read the classes — exactly one point is `.hot`, the rest `.dim`, only the matching `[data-p]` shapes carry `.ph`; a `mouseleave` on the svg clears all three. Figures carry no printed numbers: a `.pbadge` count above zero means a stale badge generator is still loaded and must be deleted.
+- Dense reference diagrams: the geometry script does not read text, so give one rendered screenshot a single vision read for labels sitting on connectors or clipped at the edge before delivery, then fix with a white text halo (`paint-order: stroke`) or by moving the label. This is not the banned full visual review of shell geometry — it is a legibility check on one figure.
 - `python3 scripts/drill.py selftest` prints `selftest ok` and asserts interval math, mastery, wrong reset and partial handling.
 - `python3 -m unittest discover -s tests -v` passes against a temporary `DRILL_STORE`.
 - Smoke test: `DRILL_STORE=$(mktemp)/d.json` then `add`, `due`, `card`, `reveal`, `grade right`, `stats`; the item moves to a future date and status `learning`.

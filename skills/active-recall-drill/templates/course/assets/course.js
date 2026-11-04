@@ -41,6 +41,7 @@
   }
 
   const currentId = document.body.dataset.chapter || 'index';
+  const ROOT = document.body.dataset.root || '';
   markVisited(currentId);
   const progress = readProgress();
 
@@ -53,11 +54,15 @@
   if (navHost) {
     const pills = CHAPTERS.map(c => {
       const cls = c.id === currentId ? 'pill cur' : (progress[c.id] ? 'pill done' : 'pill');
-      return `<a class="${cls}" href="${c.file}">${c.num} ${c.title}</a>`;
+      return `<a class="${cls}" href="${ROOT}${c.file}">${c.num} ${c.title}</a>`;
     }).join('');
+    const MODULES = window.__COURSE_MODULES || [];
+    const mod = MODULES.find(m => (m.chapters || []).some(c => c.id === currentId));
+    const modLabel = mod ? `<div class="modlabel">模块 ${mod.num} · ${mod.title}</div>` : '';
     navHost.innerHTML = `<div class="inner">
-      <a class="brand" href="index.html">${t('courseMap')}</a>
-      <nav class="pills">${pills}<a class="pill" href="glossary.html">术语表</a></nav>
+      <a class="brand" href="${ROOT}index.html">${t('courseMap')}</a>
+      ${modLabel}
+      <nav class="pills">${pills}<a class="pill" href="${ROOT}glossary.html">术语表</a></nav>
       <button class="lang" id="langToggle">${t('switchTo')}</button>
     </div>`;
     // 鼠标停在章节列表上时，垂直滚轮改为横向滚动
@@ -84,8 +89,8 @@
     const prev = idx > 0 ? CHAPTERS[idx - 1] : null;
     const next = idx >= 0 && idx < CHAPTERS.length - 1 ? CHAPTERS[idx + 1] : null;
     pagerHost.innerHTML = `
-      ${prev ? `<a href="${prev.file}">← ${prev.num} ${prev.title}</a>` : '<span></span>'}
-      ${next ? `<a href="${next.file}">${next.num} ${next.title} →</a>` : `<a href="index.html">${t('backToMap')}</a>`}`;
+      ${prev ? `<a href="${ROOT}${prev.file}">← ${prev.num} ${prev.title}</a>` : '<span></span>'}
+      ${next ? `<a href="${ROOT}${next.file}">${next.num} ${next.title} →</a>` : `<a href="${ROOT}index.html">${t('backToMap')}</a>`}`;
   }
 
 
@@ -131,32 +136,33 @@
   // ---- 复制上下文（不写文件、不起服务）----
   function currentChapterMeta() {
     const c = CHAPTERS.find(x => x.id === (document.body.dataset.chapter || 'index')) || {};
-    const el = document.getElementById('step');
-    const m = el && el.textContent.match(/\d+/);
-    return { id: c.id, num: c.num, title: c.title, step: m ? Number(m[0]) : 0 };
+    return { id: c.id, num: c.num, title: c.title };
   }
 
   function contextText() {
     const cur = currentChapterMeta();
     let visited = {};
     try { visited = JSON.parse(localStorage.getItem('netcloud-course-progress') || '{}'); } catch (e) {}
-    const seen = CHAPTERS.filter(c => c.id !== 'index' && visited[c.id])
-      .map(c => `${c.num} ${c.title}`).join('、') || '（还没有记录）';
-    const stepEl = document.getElementById('step');
-    const sm = stepEl && stepEl.textContent.match(/(\d+)\s*步\s*\/\s*共\s*(\d+)\s*步/);
-    const stepText = sm ? `第 ${sm[1]} 步 / 共 ${sm[2]} 步` : (stepEl ? stepEl.textContent.trim() : '未知');
+    const all = CHAPTERS.filter(c => c.id !== 'index');
+    const seen = all.filter(c => visited[c.id]);
+    const lines = [];
+    for (let i = 0; i < seen.length; i += 4) {
+      lines.push('  ' + seen.slice(i, i + 4).map(c => `${c.num} ${c.title}`).join('、'));
+    }
     const now = new Date();
     const stamp = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' +
       String(now.getDate()).padStart(2, '0') + ' ' + String(now.getHours()).padStart(2, '0') + ':' +
       String(now.getMinutes()).padStart(2, '0');
     return [
       '【课程进度】',
-      `当前：第 ${cur.num} 章 ${cur.title}（${location.pathname.split('/').pop()}）`,
-      `步骤：${stepText}`,
-      `已看过：${seen}`,
+      `当前：${cur.num} ${cur.title}（${location.pathname.split('/').pop()}）`,
+      `进度：已看过 ${seen.length} / ${all.length} 章`,
+      seen.length ? '已看过：\n' + lines.join('\n') : '已看过：（还没有记录）',
       `时间：${stamp}`,
     ].join('\n');
   }
+
+  window.courseContext = contextText;
 
   function toast(text) {
     const t = document.createElement('div');
@@ -200,7 +206,7 @@
       <input id="termQ" placeholder="搜缩写、英文或中文…" autocomplete="off">
       <div class="term-results" id="termResults"></div>
       <div class="term-detail" id="termDetail"></div>
-      <div class="term-foot"><span>回车打开第一条 · Esc 关闭</span><a href="glossary.html">打开术语表</a></div>
+      <div class="term-foot"><span>回车打开第一条 · Esc 关闭</span><a href="${ROOT}glossary.html">打开术语表</a></div>
     </div>`;
     document.body.appendChild(overlay);
     const input = overlay.querySelector('#termQ');
@@ -314,7 +320,15 @@
       const def = document.getElementById('tdef');
       host.innerHTML = '';
       if (def) def.hidden = true;
-      (keys || []).forEach(k => {
+      const scope = document.querySelector('.wrap') || document.body;
+      const text = scope.innerText || '';
+      const has = k => /^[\x20-\x7e]+$/.test(k)
+        ? new RegExp('(^|[^A-Za-z0-9])' + k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '([^A-Za-z0-9]|$)').test(text)
+        : text.indexOf(k) >= 0;
+      const all = Object.keys(window.TERMS).filter(k => /^[A-Z][A-Z0-9-]*$/.test(k) && has(k)).sort((a, b) => b.length - a.length);
+      const order = [];
+      (keys || []).concat(all).forEach(k => { if (window.TERMS[k] && order.indexOf(k) < 0) order.push(k); });
+      order.forEach(k => {
         const term = window.TERMS[k];
         if (!term) return;
         const b = document.createElement('button');

@@ -11,8 +11,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[1] / "skills" / "active-recall-drill"
-SCRIPTS = ROOT / "scripts"
+ROOT = Path(__file__).resolve().parents[1]
+SCRIPTS = next((ROOT / "skills").glob("*/scripts"))
 
 
 def load(name: str):
