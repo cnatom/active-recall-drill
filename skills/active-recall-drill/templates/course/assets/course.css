@@ -26,7 +26,7 @@ a:hover { text-decoration: underline; }
 .wrap { max-width: 1080px; margin: 0 auto; padding: 0 26px 56px; }
 
 /* 左侧垂直课程导航 */
-body { padding-left: 212px; }
+body { padding-left: 408px; }
 .cnav {
   position: fixed; top: 0; bottom: 0; left: 0; width: 212px; z-index: 20;
   background: #fbfbf9; border-right: 1px solid var(--line);
@@ -60,6 +60,35 @@ body { padding-left: 212px; }
   .cnav a.pill.done { border-color: #bfe0cb; }
   .cnav a.pill.cur { border-color: var(--accent); }
   .dock { left: 0; }
+}
+
+/* 二级目录：课程地图右侧，一级分组 + 二级章节 */
+body { padding-left: 408px; }
+#tocnav {
+  position: fixed; top: 0; bottom: 0; left: 212px; width: 196px; z-index: 19;
+  background: #fff; border-right: 1px solid var(--line); overflow-y: auto;
+}
+.tocinner { padding: 16px 10px 24px; }
+.tocbrand { font-size: 12.5px; font-weight: 600; color: var(--muted); letter-spacing: .04em; padding: 0 8px 10px; }
+.tocgroup { margin: 0 0 4px; }
+.tocgroup summary {
+  cursor: pointer; list-style: none; font-size: 12px; color: var(--muted);
+  padding: 5px 8px; border-radius: 6px; user-select: none;
+}
+.tocgroup summary::-webkit-details-marker { display: none; }
+.tocgroup summary:hover { background: #f4f5f7; }
+.tocgroup summary::before { content: "▸ "; font-size: 10px; }
+.tocgroup[open] summary::before { content: "▾ "; }
+.tocgroup nav { display: flex; flex-direction: column; gap: 1px; padding: 2px 0 6px; }
+.tocitem { display: block; font-size: 12.5px; line-height: 1.4; padding: 4px 8px; border-radius: 6px; color: var(--body); }
+.tocitem:hover { background: #f4f5f7; text-decoration: none; }
+.tocitem.done { color: var(--green); }
+.tocitem.cur { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+.dock { left: 408px; }
+@media (max-width: 1200px) {
+  body { padding-left: 212px; }
+  #tocnav { display: none; }
+  .dock { left: 212px; }
 }
 
 /* 页头 */
@@ -165,7 +194,7 @@ button.on { background: var(--accent-soft); border-color: var(--accent); color: 
 
 /* 固定在底部的控制条：按钮、步骤说明、本步术语始终可见 */
 .dock {
-  position: fixed; left: 212px; right: 0; bottom: 0; z-index: 40;
+  position: fixed; left: 408px; right: 0; bottom: 0; z-index: 40;
   background: rgba(252, 252, 250, .97);
   border-top: 1px solid var(--line);
   backdrop-filter: saturate(180%) blur(10px);

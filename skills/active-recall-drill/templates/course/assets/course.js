@@ -52,19 +52,42 @@
 
   const navHost = document.getElementById('cnav');
   if (navHost) {
-    const pills = CHAPTERS.map(c => {
-      const cls = c.id === currentId ? 'pill cur' : (progress[c.id] ? 'pill done' : 'pill');
-      return `<a class="${cls}" href="${ROOT}${c.file}">${c.num} ${c.title}</a>`;
-    }).join('');
     const MODULES = window.__COURSE_MODULES || [];
     const mod = MODULES.find(m => (m.chapters || []).some(c => c.id === currentId));
     const modLabel = mod ? `<div class="modlabel">模块 ${mod.num} · ${mod.title}</div>` : '';
+    const modPills = MODULES.map(m => {
+      const cls = m === mod ? 'pill cur' : 'pill';
+      const first = (m.chapters || [])[0] || { file: 'index.html' };
+      return `<a class="${cls}" href="${ROOT}${first.file}">${m.num} ${m.title}</a>`;
+    }).join('');
     navHost.innerHTML = `<div class="inner">
       <a class="brand" href="${ROOT}index.html">${t('courseMap')}</a>
       ${modLabel}
-      <nav class="pills">${pills}<a class="pill" href="${ROOT}glossary.html">术语表</a></nav>
+      <nav class="pills">${modPills}<a class="pill" href="${ROOT}glossary.html">术语表</a></nav>
       <button class="lang" id="langToggle">${t('switchTo')}</button>
     </div>`;
+
+    // 二级目录：一级分类为分组，二级为章节，默认展开当前组
+    let toc = document.getElementById('tocnav');
+    if (!toc) {
+      toc = document.createElement('aside');
+      toc.id = 'tocnav';
+      document.body.appendChild(toc);
+    }
+    const groups = [];
+    CHAPTERS.forEach(c => { const g = c.group || '课程'; if (groups.indexOf(g) < 0) groups.push(g); });
+    const cur = CHAPTERS.find(c => c.id === currentId) || {};
+    toc.innerHTML = `<div class="tocinner"><div class="tocbrand">目录</div>` +
+      groups.map(g => {
+        const items = CHAPTERS.filter(c => (c.group || '课程') === g);
+        if (!items.length) return '';
+        const open = g === cur.group ? ' open' : '';
+        return `<details class="tocgroup"${open}><summary>${g}</summary><nav>` +
+          items.map(c => {
+            const cls = c.id === currentId ? 'tocitem cur' : (progress[c.id] ? 'tocitem done' : 'tocitem');
+            return `<a class="${cls}" href="${ROOT}${c.file}">${c.num} ${c.title}</a>`;
+          }).join('') + `</nav></details>`;
+      }).join('') + `</div>`;
     // 鼠标停在章节列表上时，垂直滚轮改为横向滚动
     const pillsEl = navHost.querySelector('.pills');
     if (pillsEl) {

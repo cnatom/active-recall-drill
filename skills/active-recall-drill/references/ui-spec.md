@@ -4,7 +4,7 @@ The shell the learner approved. `templates/course/assets/course.css` and `course
 
 ## Layout order (top to bottom)
 
-1. **Nav** — a fixed left rail, 212 px wide: course-map link at the top, module label under it, then one stacked label per chapter (`NN title`), language switch at the bottom of the rail. The rail scrolls vertically when the chapter list is taller than the viewport. Content and the dock start to the right of the rail (`body { padding-left: 212px }`, `.dock { left: 212px }`). Below 900 px the rail collapses to the old one-row top bar with horizontally scrolling pills; never show both.
+1. **Nav — two rails.** The left 课程地图 rail is 212 px and lists modules only (plus 术语表 and the language switch). Immediately to its right, a 196 px 目录 rail is the table of contents: one collapsible group per level-1 category (章节分组), chapters (`NN title`) as level-2 items inside, and only the group containing the current chapter open. Content and the dock start at 408 px (`body { padding-left: 408px }`, `.dock { left: 408px }`). Below 1200 px the 目录 rail is hidden and the content keeps a 212 px offset; below 900 px both rails collapse to the one-row top bar with horizontally scrolling module pills. The chapter list never sits in the 课程地图 rail again.
 2. **Header** — chapter number, title, one sentence of lead. Compact: about 18 px top padding.
 3. **Points list** — inside `.side`, beside the figure, nothing else in the rail. One column, every point visible at once, numbered, ordered 由浅入深 (what it is → how it works → what it means). One sentence per point, bold lead phrase, badge number. The figure carries `data-p` links but no printed numbers; hovering a figure part highlights the matching point.
 4. **Figure + tables** — one complete figure; nothing hidden or dimmed. Field tables never share the points rail: they go full-width in `.tables` below the stage, or, when the rail is taller than the figure, at the foot of the `.fig` column so neither column is left hundreds of pixels empty.
@@ -34,9 +34,9 @@ The shell the learner approved. `templates/course/assets/course.css` and `course
 
 ## Numbers
 
-- Nav rail: 212 px wide, 16 px top padding, labels 12.5 px, 1 px gap, 5 px vertical padding per label.
+- Nav rails: 课程地图 212 px with module labels only; 目录 196 px with 12 px group summaries and 12.5 px chapter items, 1 px gap, 4 px vertical padding, current item on the accent-soft background.
 - Collapsed mobile bar: 5 px vertical padding, pills 12 px, 5 px gaps.
-- Dock: 6 px vertical padding, chips 12 px, caption ellipsised when too long, offset 212 px from the left on desktop.
+- Dock: 6 px vertical padding, chips 12 px, caption ellipsised when too long, offset 408 px from the left on desktop (212 px between 900 and 1200 px).
 - Points list: one column, the only content of `.side`, 13 px text, 8 px gap, 20 px badge, 8 px inner padding; it moves below the figure only in the mobile stack.
 - Figure column: the points rail takes ~290 px, so the SVG keeps at least 380 px; a viewBox wider than 900 units uses `.stage.wide` and moves the rail below the figure.
 - Analogy block: 12 px padding, 12 px caption, full-width SVG; it sits after the points and before the dock.
@@ -48,7 +48,7 @@ The shell the learner approved. `templates/course/assets/course.css` and `course
 DOM dumps prove text, links, points count and term chips; they say nothing about geometry. For a shell change (rail width, dock offset, column split) do a pixel check instead of a vision pass:
 
 1. Render at the real width: `"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless=new --disable-gpu --window-size=1440,900 --screenshot=/tmp/nav.png "file:///abs/page.html"`.
-2. Sample columns with PIL: rail background at x ≈ 60, hairline border at x ≈ 211, content background at x ≈ 220, dock background only below its top edge and only to the right of x = 212.
+2. Sample columns with PIL: 课程地图 background at x ≈ 60, its border at x ≈ 211, 目录 background at x ≈ 300, its border at x ≈ 407, content background at x ≈ 420, dock background only to the right of x = 408.
 3. A rail that overlaps content, a dock still anchored at x = 0, or a page whose `body` padding was never applied each show up as the wrong colour in one of those samples.
 
 A default 800×600 headless window is below the 900 px breakpoint, so it renders the mobile top bar; pass `--window-size` explicitly when checking the rail.
@@ -61,6 +61,15 @@ The earlier spec set no font sizes, so a 1100-unit-wide viewBox squeezed into a 
 - **Minimum SVG font 11.5 units**; node title 14, secondary line 12, annotation/footnote 11.5. Nothing below 11, ever (no 10 px labels).
 - **No dimmed nodes**: step-free pages show everything at full opacity. Point at a region through `data-p` hover highlighting and a light callout, never by fading the rest to grey and never by stamping numbers on the artwork.
 - Effective size is what counts: with the diagram at full width a 900-unit viewBox renders near 1:1, so 12 units ≈ 12 px on screen.
+
+## End-to-end flow figure
+
+A business-flow page (request → provisioning → workload running → result back) uses one wide figure, not a second sidebar.
+
+- **U-shaped chain**: 6–7 boxes, top row left → right, a vertical arrow down the right edge, bottom row right → left ending at the system that confirms completion. Each box carries a small lane label (`OSS`, `MANO · NFVO`, `资源 · VIM`, `控制 · SDNC`, `网元 · VNF`), a title, and one subtitle line.
+- **Put the interface name in the subtitle** (`经 Or-Vnfm 调用，先申请 Grant`). Do not float separate interface labels in the narrow gaps between boxes: a 10–11-unit label is wider than a 40-unit gap and lands on the arrowhead or the box border. Folding the name into the box removes that class of collision entirely.
+- **Keep box subtitles at 11.5 units minimum**, same floor as every other diagram label; a 10-unit subtitle reads as fine print at 1440 px.
+- Below the figure: numbered steps in two columns (left 1–4, right 5–7), one line each, ending with a short failure/rollback paragraph. The steps repeat the figure in words; the figure never relies on the steps to be understood.
 
 ## Changing the shell
 

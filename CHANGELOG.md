@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.12.0 — 2026-11-04
+
+- Navigation split into two vertical rails: 课程地图 lists modules only, the new 目录 rail shows level-1 chapter groups with level-2 chapters, only the current group expanded.
+- Chapter data gains a `group` field; the scaffold falls back to a single group when it is absent.
+- 目录 rail hides below 1200 px; below 900 px the top bar shows module pills.
+- Chapter page gains a spoken walkthrough section on the architecture chapter.
+
 ## 1.11.0 — 2026-11-04
 
 - Packaged for the Agent Skills layout: repo root keeps README, LICENSE, CHANGELOG and `tests/`, the installable skill lives at `skills/active-recall-drill/`.
