@@ -63,7 +63,7 @@
     navHost.innerHTML = `<div class="inner">
       <a class="brand" href="${ROOT}index.html">${t('courseMap')}</a>
       ${modLabel}
-      <nav class="pills">${modPills}<a class="pill" href="${ROOT}glossary.html">术语表</a></nav>
+      <nav class="pills">${modPills}<a class="pill" href="${ROOT}glossary.html">术语表</a><a class="pill" href="${ROOT}notes.html">细碎知识</a></nav>
       <button class="lang" id="langToggle">${t('switchTo')}</button>
     </div>`;
 

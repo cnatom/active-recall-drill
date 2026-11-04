@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>细碎知识</title>
+<link rel="stylesheet" href="assets/course.css">
+<style>
+  .notes-head { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 18px 0 12px; }
+  .notes-head input {
+    flex: 1 1 260px; font-size: 14px; padding: 9px 12px; border: 1px solid var(--line);
+    border-radius: 8px; background: #fff; color: var(--ink);
+  }
+  .notes-head input:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+  .catbar { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 16px; }
+  .catbar button {
+    font-size: 12.5px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line);
+    background: #fff; color: var(--body); cursor: pointer;
+  }
+  .catbar button.on { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  .notelist { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+  .note {
+    background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 0;
+    overflow: hidden;
+  }
+  .note summary {
+    cursor: pointer; list-style: none; padding: 12px 14px; font-size: 14px; font-weight: 600;
+    color: var(--ink); display: flex; gap: 8px; align-items: flex-start;
+  }
+  .note summary::-webkit-details-marker { display: none; }
+  .note summary::before { content: "＋"; color: var(--muted); font-weight: 400; flex: 0 0 auto; }
+  .note[open] summary::before { content: "－"; }
+  .note .body { padding: 0 14px 12px 32px; font-size: 13.5px; line-height: 1.7; color: var(--body); }
+  .note .src { display: block; margin-top: 6px; font-size: 11.5px; color: var(--muted); }
+  .note .cat { display: inline-block; font-size: 11px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 1px 7px; margin-left: auto; white-space: nowrap; }
+  .empty { color: var(--muted); font-size: 13.5px; padding: 20px 0; }
+</style>
+</head>
+<body data-root="" data-chapter="notes">
+
+<div class="cnav" id="cnav"></div>
+
+<div class="wrap">
+  <header class="page">
+    <div class="kicker">参考</div>
+    <h1>细碎知识</h1>
+    <p class="lede">一条一个结论，点开看答案。按分类过滤，或直接搜编号、网元、协议。</p>
+  </header>
+
+  <div class="notes-head">
+    <input id="noteSearch" type="search" placeholder="搜 jsAMF026、BFD、5GC…" autocomplete="off">
+  </div>
+  <div class="catbar" id="catbar"></div>
+  <div class="notelist" id="notelist"></div>
+  <p class="empty" id="empty" hidden>没有匹配的条目。</p>
+</div>
+
+<script src="assets/course-data.js"></script>
+<script src="assets/i18n.js"></script>
+<script src="assets/notes-data.js"></script>
+<script src="assets/course.js"></script>
+<script>
+(function () {
+  var notes = window.__COURSE_NOTES || [];
+  var host = document.getElementById('notelist');
+  var catbar = document.getElementById('catbar');
+  var empty = document.getElementById('empty');
+  var input = document.getElementById('noteSearch');
+  var activeCat = '全部';
+  var cats = ['全部'].concat(notes.map(function (n) { return n.cat; }).filter(function (c, i, a) { return a.indexOf(c) === i; }));
+
+  cats.forEach(function (c) {
+    var b = document.createElement('button');
+    b.textContent = c;
+    b.className = c === activeCat ? 'on' : '';
+    b.onclick = function () { activeCat = c; render(); catbar.querySelectorAll('button').forEach(function (x) { x.className = x.textContent === c ? 'on' : ''; }); };
+    catbar.appendChild(b);
+  });
+
+  function render() {
+    var q = (input.value || '').trim().toLowerCase();
+    var shown = 0;
+    host.innerHTML = '';
+    notes.forEach(function (n) {
+      if (activeCat !== '全部' && n.cat !== activeCat) return;
+      var hay = (n.q + ' ' + n.a + ' ' + n.cat + ' ' + (n.src || '')).toLowerCase();
+      if (q && hay.indexOf(q) < 0) return;
+      var d = document.createElement('details');
+      d.className = 'note';
+      d.innerHTML = '<summary>' + n.q + '<span class="cat">' + n.cat + '</span></summary>' +
+        '<div class="body">' + n.a + (n.src ? '<span class="src">来源：' + n.src + '</span>' : '') + '</div>';
+      host.appendChild(d);
+      shown += 1;
+    });
+    empty.hidden = shown > 0;
+  }
+  input.addEventListener('input', render);
+  render();
+})();
+</script>
+</body>
+</html>

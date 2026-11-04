@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.14.0 — 2026-11-04
+
+- New reference page `notes.html` (细碎知识): collapsible question cards with search and category chips, linked from the course rail.
+- Entries live in `assets/notes-data.js`; `new_course.py` scaffolds the page and data file.
+- Term list gains `5GC`.
+
 ## 1.13.0 — 2026-11-04
 
 - 目录栏可收起：模块列表下方的 `收起目录 / 目录 ›` 按钮把二级目录收成 0 宽，状态记在 localStorage，内容区与底栏同步回移。
