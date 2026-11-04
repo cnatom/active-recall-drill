@@ -4,13 +4,26 @@ The shell the learner approved. `templates/course/assets/course.css` and `course
 
 ## Layout order (top to bottom)
 
-1. **Nav — two rails.** The left 课程地图 rail is 212 px and lists modules only (plus 术语表 and the language switch). Immediately to its right, a 196 px 目录 rail is the table of contents: one collapsible group per level-1 category (章节分组), chapters (`NN title`) as level-2 items inside, and only the group containing the current chapter open. Content and the dock start at 408 px (`body { padding-left: 408px }`, `.dock { left: 408px }`). Below 1200 px the 目录 rail is hidden and the content keeps a 212 px offset; below 900 px both rails collapse to the one-row top bar with horizontally scrolling module pills. The chapter list never sits in the 课程地图 rail again. The 目录 rail itself collapses: a `收起目录 / 目录 ›` button under the module list sets `body.toc-collapsed` (persisted in `localStorage`), the rail animates to zero width and the content and dock move back to 212 px; groups inside the rail expand and collapse natively via `<details>`.
+1. **Nav — two rails.** The left 课程地图 rail is 212 px and lists modules only (plus 术语表, 细碎知识 and the language switch). Immediately to its right, a 196 px 目录 rail is the table of contents: one collapsible group per level-1 category (章节分组), chapters (`NN title`) as level-2 items inside, and only the group containing the current chapter open. Content and the dock start at 408 px (`body { padding-left: 408px }`, `.dock { left: 408px }`). Below 1200 px the 目录 rail is hidden and the content keeps a 212 px offset; below 900 px both rails collapse to the one-row top bar with horizontally scrolling module pills. The chapter list never sits in the 课程地图 rail again. Both rails collapse independently through two small fixed handles at the lower left (`‹ 地图 / 地图 ›` and `‹ 目录 / 目录 ›`), persisted as `body.map-collapsed` and `body.toc-collapsed` in `localStorage`. Widths come from `--map-w` and `--toc-w` on `:root`; the content padding and dock offset are the sum, so any combination (both, either, neither) leaves no dead space. Groups inside the 目录 rail expand and collapse natively via `<details>`.
 2. **Header** — chapter number, title, one sentence of lead. Compact: about 18 px top padding.
 3. **Points list** — inside `.side`, beside the figure, nothing else in the rail. One column, every point visible at once, numbered, ordered 由浅入深 (what it is → how it works → what it means). One sentence per point, bold lead phrase, badge number. The figure carries `data-p` links but no printed numbers; hovering a figure part highlights the matching point.
 4. **Figure + tables** — one complete figure; nothing hidden or dimmed. Field tables never share the points rail: they go full-width in `.tables` below the stage, or, when the rail is taller than the figure, at the foot of the `.fig` column so neither column is left hundreds of pixels empty.
 5. **Cards / notes** — two cards at most, each one sentence. The plain-language layer is a **visual analogy** (`.analogy` block: small SVG scene labelled `生活中的样子`), not a text paragraph; place it after the points and before the dock.
 6. **Follow-up appendix** (optional) — `.extra` section, a `<details>` block titled by the question, collapsed by default. Never placed between points.
 7. **Dock** — fixed to the viewport bottom, one row: term chips for the whole page and the `复制上下文` button. No step counter and no step buttons; chapter switching stays on the pager and `↑/↓`. The body reserves padding equal to its height.
+
+## Reference page (`notes.html`)
+
+A chapter-free page for loose facts that belong to no single chapter: an alarm seen at work, a device-numbering convention, a protocol detail. It reuses the shell but carries no progress, pager or `course-data.js` entry.
+
+- **Entry point**: `细碎知识` link beside `术语表` in the 课程地图 rail, on every page including the map and this one.
+- **Header**: kicker `参考`, the title `细碎知识`, one lead line explaining that each card is one conclusion and opens for the answer.
+- **Controls**: a full-width search input (placeholder names two or three real tokens from the data), then category chips `全部` + one per category, current chip on the accent-soft background.
+- **Cards**: CSS grid `repeat(auto-fill, minmax(320px, 1fr))`. Each card is a `<details class="note">`: the question in `<summary>` with a `＋ / －` marker and a category tag on the right, the answer plus a `来源：…` line in the body. Answers stay one short paragraph.
+- **Empty state**: a muted sentence when search and category filter leave nothing, never a blank area.
+- **Data**: `assets/notes-data.js` assigns `window.__COURSE_NOTES = [{cat,q,a,src}, …]`. Adding a nugget edits only this file; the page renders and filters on load.
+- **Content rule**: phrase the question the way the learner would ask it, answer with what it is, why it happens and the first check, and mark any step still awaiting field confirmation instead of stating it as fact.
+- **Pitfall**: a missing comma between two objects breaks the whole array at parse time and the page renders empty while the HTML still loads. Run `node --check assets/notes-data.js` and count `.note` cards in a headless dump after each edit.
 
 ## Interactions
 

@@ -88,38 +88,47 @@
             return `<a class="${cls}" href="${ROOT}${c.file}">${c.num} ${c.title}</a>`;
           }).join('') + `</nav></details>`;
       }).join('') + `</div>`;
-    // 目录可收起，分组可伸展
+    // 双栏各自伸缩：一级课程地图、二级目录
+    const MAP_KEY = 'course-map-collapsed';
     const TOC_KEY = 'course-toc-collapsed';
-    const tocBtn = document.createElement('button');
-    tocBtn.className = 'toctoggle';
-    tocBtn.type = 'button';
-    const syncTocBtn = () => {
-      const collapsed = document.body.classList.contains('toc-collapsed');
-      tocBtn.textContent = collapsed ? '目录 ›' : '‹ 收起目录';
-      tocBtn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
-    };
+    if (localStorage.getItem(MAP_KEY) === '1') document.body.classList.add('map-collapsed');
     if (localStorage.getItem(TOC_KEY) === '1') document.body.classList.add('toc-collapsed');
-    tocBtn.onclick = () => {
+
+    const makeHandle = (id, onClick) => {
+      const b = document.createElement('button');
+      b.id = id;
+      b.type = 'button';
+      b.className = 'sidehandle';
+      b.onclick = onClick;
+      document.body.appendChild(b);
+      return b;
+    };
+    const mapBtn = makeHandle('mapHandle', () => {
+      document.body.classList.toggle('map-collapsed');
+      localStorage.setItem(MAP_KEY, document.body.classList.contains('map-collapsed') ? '1' : '0');
+      applyMenu();
+    });
+    const tocBtn = makeHandle('tocHandle', () => {
       document.body.classList.toggle('toc-collapsed');
       localStorage.setItem(TOC_KEY, document.body.classList.contains('toc-collapsed') ? '1' : '0');
-      syncTocBtn();
-      applyTocState();
-    };
-    navHost.querySelector('.inner').appendChild(tocBtn);
-    syncTocBtn();
+      applyMenu();
+    });
 
-    const applyTocState = () => {
-      const wide = window.innerWidth > 1200;
-      const on = wide && document.body.classList.contains('toc-collapsed');
-      toc.style.width = on ? '0px' : '';
-      toc.style.opacity = on ? '0' : '';
-      toc.style.borderRight = on ? '0' : '';
-      document.body.style.paddingLeft = on ? '212px' : '';
-      const dock = document.querySelector('.dock');
-      if (dock) dock.style.left = on ? '212px' : '';
-    };
-    applyTocState();
-    window.addEventListener('resize', applyTocState);
+    function applyMenu() {
+      const wide = window.innerWidth > 900;
+      const wideToc = window.innerWidth > 1200;
+      const mapOn = wide && document.body.classList.contains('map-collapsed');
+      const tocOn = wideToc && document.body.classList.contains('toc-collapsed');
+      const root = document.documentElement;
+      root.style.setProperty('--map-w', mapOn ? '0px' : (wide ? '212px' : '0px'));
+      root.style.setProperty('--toc-w', tocOn ? '0px' : (wideToc ? '196px' : '0px'));
+      mapBtn.textContent = mapOn ? '地图 ›' : '‹ 地图';
+      tocBtn.textContent = tocOn ? '目录 ›' : '‹ 目录';
+      mapBtn.setAttribute('aria-expanded', mapOn ? 'false' : 'true');
+      tocBtn.setAttribute('aria-expanded', tocOn ? 'false' : 'true');
+    }
+    applyMenu();
+    window.addEventListener('resize', applyMenu);
     // 鼠标停在章节列表上时，垂直滚轮改为横向滚动
     const pillsEl = navHost.querySelector('.pills');
     if (pillsEl) {

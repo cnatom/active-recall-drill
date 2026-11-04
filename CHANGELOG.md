@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.15.0 — 2026-11-04
+
+- 一级课程地图栏和二级目录栏可以各自独立收起、展开，状态分别持久化。
+- 布局宽度改由 `--map-w` 与 `--toc-w` 相加，正文与底栏任意组合都不留空档。
+- 两个浮动把手固定在左下角，窄屏自动隐藏。
+
 ## 1.14.0 — 2026-11-04
 
 - New reference page `notes.html` (细碎知识): collapsible question cards with search and category chips, linked from the course rail.
