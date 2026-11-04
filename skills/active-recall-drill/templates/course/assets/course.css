@@ -99,6 +99,10 @@ body.toc-collapsed .tocinner { opacity: 0; pointer-events: none; }
 body.map-collapsed #mapToggle { right: auto; left: 4px; }
 body.toc-collapsed #tocToggle { right: 4px; }
 #tocnav { transition: width .2s ease, opacity .15s ease; }
+/* 合并章节的分节标题 */
+.part { margin: 36px 0 6px; padding-top: 22px; border-top: 1px solid var(--line); font-size: 17px; }
+.partlead { margin: 0 0 10px; color: var(--body); font-size: 14px; }
+
 /* 页头 */
 header.page { padding: 18px 0 4px; }
 .kicker { font-size: 12.5px; letter-spacing: .06em; color: var(--muted); text-transform: uppercase; }

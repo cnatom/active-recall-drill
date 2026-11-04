@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.17.0 — 2026-11-04
+
+- Merged chapters get a `.part` section heading and `.partlead`; each section keeps its own figure and points rail.
+- Template stylesheet ships the `.part` rules.
+
 ## 1.16.0 — 2026-11-04
 
 - Collapse buttons move onto the rails themselves: `#mapToggle` in the course-map rail, `#tocToggle` in the 目录 rail.
