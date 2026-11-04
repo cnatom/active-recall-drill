@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.16.0 — 2026-11-04
+
+- Collapse buttons move onto the rails themselves: `#mapToggle` in the course-map rail, `#tocToggle` in the 目录 rail.
+- A collapsed rail keeps a 28 px strip so its button stays reachable; contents fade out.
+
 ## 1.15.0 — 2026-11-04
 
 - 一级课程地图栏和二级目录栏可以各自独立收起、展开，状态分别持久化。

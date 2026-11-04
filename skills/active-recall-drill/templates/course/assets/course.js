@@ -88,31 +88,33 @@
             return `<a class="${cls}" href="${ROOT}${c.file}">${c.num} ${c.title}</a>`;
           }).join('') + `</nav></details>`;
       }).join('') + `</div>`;
-    // 双栏各自伸缩：一级课程地图、二级目录
+    // 双栏各自伸缩：按钮挂在各自栏上
     const MAP_KEY = 'course-map-collapsed';
     const TOC_KEY = 'course-toc-collapsed';
     if (localStorage.getItem(MAP_KEY) === '1') document.body.classList.add('map-collapsed');
     if (localStorage.getItem(TOC_KEY) === '1') document.body.classList.add('toc-collapsed');
 
-    const makeHandle = (id, onClick) => {
-      const b = document.createElement('button');
-      b.id = id;
-      b.type = 'button';
-      b.className = 'sidehandle';
-      b.onclick = onClick;
-      document.body.appendChild(b);
-      return b;
-    };
-    const mapBtn = makeHandle('mapHandle', () => {
+    const mapBtn = document.createElement('button');
+    mapBtn.type = 'button';
+    mapBtn.className = 'railbtn';
+    mapBtn.id = 'mapToggle';
+    mapBtn.onclick = () => {
       document.body.classList.toggle('map-collapsed');
       localStorage.setItem(MAP_KEY, document.body.classList.contains('map-collapsed') ? '1' : '0');
       applyMenu();
-    });
-    const tocBtn = makeHandle('tocHandle', () => {
+    };
+    navHost.appendChild(mapBtn);
+
+    const tocBtn = document.createElement('button');
+    tocBtn.type = 'button';
+    tocBtn.className = 'railbtn';
+    tocBtn.id = 'tocToggle';
+    tocBtn.onclick = () => {
       document.body.classList.toggle('toc-collapsed');
       localStorage.setItem(TOC_KEY, document.body.classList.contains('toc-collapsed') ? '1' : '0');
       applyMenu();
-    });
+    };
+    toc.appendChild(tocBtn);
 
     function applyMenu() {
       const wide = window.innerWidth > 900;
@@ -120,10 +122,12 @@
       const mapOn = wide && document.body.classList.contains('map-collapsed');
       const tocOn = wideToc && document.body.classList.contains('toc-collapsed');
       const root = document.documentElement;
-      root.style.setProperty('--map-w', mapOn ? '0px' : (wide ? '212px' : '0px'));
-      root.style.setProperty('--toc-w', tocOn ? '0px' : (wideToc ? '196px' : '0px'));
-      mapBtn.textContent = mapOn ? '地图 ›' : '‹ 地图';
-      tocBtn.textContent = tocOn ? '目录 ›' : '‹ 目录';
+      root.style.setProperty('--map-w', !wide ? '0px' : (mapOn ? '28px' : '212px'));
+      root.style.setProperty('--toc-w', !wideToc ? '0px' : (tocOn ? '28px' : '196px'));
+      mapBtn.textContent = mapOn ? '›' : '‹';
+      tocBtn.textContent = tocOn ? '›' : '‹';
+      mapBtn.title = mapOn ? '展开课程地图' : '收起课程地图';
+      tocBtn.title = tocOn ? '展开目录' : '收起目录';
       mapBtn.setAttribute('aria-expanded', mapOn ? 'false' : 'true');
       tocBtn.setAttribute('aria-expanded', tocOn ? 'false' : 'true');
     }
