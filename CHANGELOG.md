@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.19.0 — 2026-11-04
+
+- `hover-points.js` binds each `.stage` to its own points list, so merged pages keep independent highlighting.
+- Every chapter now carries `data-p` mappings; pages without grouped shapes use transparent region hotzones.
+
 ## 1.18.0 — 2026-11-04
 
 - Course map groups chapter cards under their `group` heading, matching the 目录 rail.
