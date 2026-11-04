@@ -177,6 +177,8 @@ button.on { background: var(--accent-soft); border-color: var(--accent); color: 
 .pager a:hover { text-decoration: none; border-color: var(--accent); }
 
 /* 首页课程地图 */
+.ghead { margin: 18px 0 6px; font-size: 12px; letter-spacing: .06em; color: var(--muted); font-weight: 600; }
+.ghead:first-child { margin-top: 0; }
 .map { margin: 26px 0 0; display: grid; gap: 14px; }
 .chap {
   display: grid; grid-template-columns: 46px 1fr auto; align-items: center; gap: 16px;

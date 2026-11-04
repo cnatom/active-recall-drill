@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.18.0 — 2026-11-04
+
+- Course map groups chapter cards under their `group` heading, matching the 目录 rail.
+
 ## 1.17.0 — 2026-11-04
 
 - Merged chapters get a `.part` section heading and `.partlead`; each section keeps its own figure and points rail.

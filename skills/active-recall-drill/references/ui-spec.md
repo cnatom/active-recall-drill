@@ -66,6 +66,10 @@ DOM dumps prove text, links, points count and term chips; they say nothing about
 
 A default 800×600 headless window is below the 900 px breakpoint, so it renders the mobile top bar; pass `--window-size` explicitly when checking the rail.
 
+## Course map
+
+The home map lists chapters under their `group` label, in course order, so the map mirrors the 目录 rail instead of one flat run of cards.
+
 ## Typography inside diagrams
 
 The earlier spec set no font sizes, so a 1100-unit-wide viewBox squeezed into a 700 px column scaled 11 px labels down to ~7 px and the learner could not read them.
