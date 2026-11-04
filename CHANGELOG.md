@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.12.1 — 2026-11-04
+
+- Fix breakpoint order: the 目录 rail hides at 1200 px and below, the dock offset drops to 212 px on medium screens and 0 below 900 px.
+
 ## 1.12.0 — 2026-11-04
 
 - Navigation split into two vertical rails: 课程地图 lists modules only, the new 目录 rail shows level-1 chapter groups with level-2 chapters, only the current group expanded.
