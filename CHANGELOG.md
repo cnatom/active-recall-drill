@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.24.0 — 2026-11-05
+
+- Content and dock expand to 1560 px, removing large side margins on wide screens.
+- Map frame height is viewport-based; initial zoom fits the width on wide screens and enlarges on narrow ones.
+
 ## 1.23.0 — 2026-11-05
 
 - Wide figures render inside a fixed-height `.mapview`: drag to pan, wheel or buttons to zoom, points stay beside it.

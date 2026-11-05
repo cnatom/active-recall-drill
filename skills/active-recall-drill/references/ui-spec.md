@@ -49,7 +49,9 @@ A chapter-free page for loose facts that belong to no single chapter: an alarm s
 
 - Nav rails: 课程地图 212 px with module labels only; 目录 196 px with 12 px group summaries and 12.5 px chapter items, 1 px gap, 4 px vertical padding, current item on the accent-soft background.
 - Collapsed mobile bar: 5 px vertical padding, pills 12 px, 5 px gaps.
-- Dock: 6 px vertical padding, chips 12 px, caption ellipsised when too long, offset 408 px from the left on desktop (212 px between 900 and 1200 px).
+- Content is fluid up to 1560 px (`max-width: 1560px` on `.wrap` and the dock inner), so wide windows use the space instead of leaving empty side margins.
+
+Dock: 6 px vertical padding, chips 12 px, caption ellipsised when too long, offset 408 px from the left on desktop (212 px between 900 and 1200 px).
 - Points list: one column, the only content of `.side`, 13 px text, 8 px gap, 20 px badge, 8 px inner padding; it moves below the figure only in the mobile stack.
 - Figure column: the points rail takes ~290 px, so the SVG keeps at least 380 px; a viewBox wider than 900 units uses `.stage.wide` and moves the rail below the figure.
 - Analogy block: 12 px padding, 12 px caption, full-width SVG; it sits after the points and before the dock.

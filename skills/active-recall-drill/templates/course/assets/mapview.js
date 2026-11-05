@@ -5,8 +5,8 @@
     if (!canvas) return;
     var zoom = 1;
     var scale = view.querySelector('.mapscale');
-    // 初始放大一点，文字可读；仍可缩小看全图
-    zoom = 1.35;
+    // 宽屏先看全图，窄屏放大保证可读
+    zoom = view.clientWidth >= 860 ? 1 : 1.35;
     canvas.style.width = (zoom * 100) + '%';
 
     function syncScale() { if (scale) scale.textContent = Math.round(zoom * 100) + '%'; }
