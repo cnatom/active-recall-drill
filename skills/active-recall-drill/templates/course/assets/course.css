@@ -282,3 +282,17 @@ button.on { background: var(--accent-soft); border-color: var(--accent); color: 
 .stage.wide .side { flex: 0 0 auto; width: 100%; max-width: 560px; }
 
 @media (max-width: 900px) { .dock { left: 0; } }
+
+.stage.wide { flex-direction: column; align-items: stretch; }
+.stage.wide svg { flex: 0 0 auto; width: 100%; min-width: 100%; }
+.stage.wide .fig {
+  position: sticky; top: 8px; z-index: 6;
+  background: var(--bg); padding-bottom: 10px;
+}
+.stage.wide .side { flex: 0 0 auto; width: 100%; max-width: none; margin-top: 4px; }
+.stage.wide .points { grid-template-columns: 1fr 1fr; }
+.stage.wide .hoverhint { margin-bottom: 4px; }
+@media (max-width: 900px) {
+  .stage.wide .fig { position: static; padding-bottom: 0; }
+  .stage.wide .points { grid-template-columns: 1fr; }
+}

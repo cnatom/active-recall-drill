@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.22.0 — 2026-11-05
+
+- Wide-stage figures stay sticky while the reader scrolls through the two-column points below, so diagram and explanation are visible together.
+
 ## 1.21.0 — 2026-11-04
 
 - Level-1 rail gets a real selected state for modules and reference pages.
