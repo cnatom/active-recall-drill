@@ -301,17 +301,10 @@ button.on { background: var(--accent-soft); border-color: var(--accent); color: 
 .mapview.dragging { cursor: grabbing; }
 .mapcanvas { width: 100%; min-width: 100%; }
 .mapcanvas svg { width: 100%; height: auto; display: block; }
-.maphint {
-  position: absolute; left: 10px; top: 8px; z-index: 3; pointer-events: none;
-  font-size: 11px; color: var(--muted); background: rgba(255,255,255,.92);
-  padding: 2px 7px; border-radius: 6px; border: 1px solid #eef0f3;
-}
-.mapscale {
-  position: absolute; left: 10px; bottom: 10px; z-index: 3;
-  font-size: 11px; color: var(--muted); background: rgba(255,255,255,.92);
-  padding: 2px 7px; border-radius: 6px; border: 1px solid #eef0f3;
-}
-.mapctl { position: absolute; right: 10px; bottom: 10px; z-index: 3; display: flex; gap: 6px; }
+
+.maptools { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+.mapscale { font-size: 11px; color: var(--muted); }
+.mapctl { display: flex; gap: 6px; }
 .mapctl button {
   width: 28px; height: 28px; padding: 0; border: 1px solid var(--line);
   border-radius: 6px; background: #fff; color: var(--body); cursor: pointer; font-size: 13px;

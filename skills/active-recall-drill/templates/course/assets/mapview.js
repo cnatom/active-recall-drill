@@ -4,7 +4,8 @@
     var canvas = view.querySelector('.mapcanvas');
     if (!canvas) return;
     var zoom = 1;
-    var scale = view.querySelector('.mapscale');
+    var root = view.closest('.fig') || view;
+    var scale = root.querySelector('.mapscale');
     // 宽屏先看全图，窄屏放大保证可读
     zoom = view.clientWidth >= 860 ? 1 : 1.35;
     canvas.style.width = (zoom * 100) + '%';
@@ -59,7 +60,7 @@
       setZoom(zoom * (e.deltaY < 0 ? 1.15 : 1 / 1.15), e.clientX - r.left, e.clientY - r.top);
     }, { passive: false });
 
-    Array.prototype.forEach.call(view.querySelectorAll('[data-z]'), function (btn) {
+    Array.prototype.forEach.call(root.querySelectorAll('[data-z]'), function (btn) {
       btn.addEventListener('click', function () {
         var z = btn.getAttribute('data-z');
         if (z === 'reset') {

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.26.0 — 2026-11-05
+
+- Remove in-page interaction instructions (drag, wheel, hover hints); controls move into a toolbar under the map frame.
+- Access layer band groups TOR with compute/storage servers, matching the spec wording.
+
 ## 1.25.0 — 2026-11-05
 
 - Add concrete diagram layout rules: 8 px grid, 20–24 px gutters, orthogonal connectors through gutters, labels off lines, one accent per plane, and a path/text overlap audit before delivery.
