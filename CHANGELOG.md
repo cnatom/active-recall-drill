@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.25.0 — 2026-11-05
+
+- Add concrete diagram layout rules: 8 px grid, 20–24 px gutters, orthogonal connectors through gutters, labels off lines, one accent per plane, and a path/text overlap audit before delivery.
+
 ## 1.24.0 — 2026-11-05
 
 - Content and dock expand to 1560 px, removing large side margins on wide screens.
