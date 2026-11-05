@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.21.0 — 2026-11-04
+
+- Level-1 rail gets a real selected state for modules and reference pages.
+- The 目录 rail is rendered only for the active level-1 item that owns chapters; reference pages (`window.__COURSE_REFS`) hide it completely.
+
 ## 1.20.0 — 2026-11-04
 
 - Every chapter now ships a `生活中的样子` analogy figure.

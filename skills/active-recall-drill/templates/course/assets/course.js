@@ -53,47 +53,56 @@
   const navHost = document.getElementById('cnav');
   if (navHost) {
     const MODULES = window.__COURSE_MODULES || [];
+    const REFS = window.__COURSE_REFS || [];
     const mod = MODULES.find(m => (m.chapters || []).some(c => c.id === currentId));
+    const activeRef = REFS.find(r => r.id === currentId) || null;
     const modLabel = mod ? `<div class="modlabel">模块 ${mod.num} · ${mod.title}</div>` : '';
     const modPills = MODULES.map(m => {
-      const cls = m === mod ? 'pill cur' : 'pill';
+      const cur = !activeRef && m === mod;
       const first = (m.chapters || [])[0] || { file: 'index.html' };
-      return `<a class="${cls}" href="${ROOT}${first.file}">${m.num} ${m.title}</a>`;
+      return `<a class="pill${cur ? ' cur' : ''}" href="${ROOT}${first.file}">${m.num} ${m.title}</a>`;
+    }).join('');
+    const refPills = REFS.map(r => {
+      const cur = activeRef && activeRef.id === r.id;
+      return `<a class="pill${cur ? ' cur' : ''}" href="${ROOT}${r.file}">${r.title}</a>`;
     }).join('');
     navHost.innerHTML = `<div class="inner">
       <a class="brand" href="${ROOT}index.html">${t('courseMap')}</a>
       ${modLabel}
-      <nav class="pills">${modPills}<a class="pill" href="${ROOT}glossary.html">术语表</a><a class="pill" href="${ROOT}notes.html">细碎知识</a></nav>
+      <nav class="pills">${modPills}${refPills}</nav>
       <button class="lang" id="langToggle">${t('switchTo')}</button>
     </div>`;
 
-    // 二级目录：一级分类为分组，二级为章节，默认展开当前组
+    // 二级目录只属于带章节的一级项；参考页没有二级菜单
     let toc = document.getElementById('tocnav');
     if (!toc) {
       toc = document.createElement('aside');
       toc.id = 'tocnav';
       document.body.appendChild(toc);
     }
-    const groups = [];
-    CHAPTERS.forEach(c => { const g = c.group || '课程'; if (groups.indexOf(g) < 0) groups.push(g); });
-    const cur = CHAPTERS.find(c => c.id === currentId) || {};
-    toc.innerHTML = `<div class="tocinner"><div class="tocbrand">目录</div>` +
-      groups.map(g => {
-        const items = CHAPTERS.filter(c => (c.group || '课程') === g);
-        if (!items.length) return '';
-        const open = g === cur.group ? ' open' : '';
-        return `<details class="tocgroup"${open}><summary>${g}</summary><nav>` +
-          items.map(c => {
-            const cls = c.id === currentId ? 'tocitem cur' : (progress[c.id] ? 'tocitem done' : 'tocitem');
-            return `<a class="${cls}" href="${ROOT}${c.file}">${c.num} ${c.title}</a>`;
-          }).join('') + `</nav></details>`;
-      }).join('') + `</div>`;
-    // 双栏各自伸缩：按钮挂在各自栏上
-    const MAP_KEY = 'course-map-collapsed';
-    const TOC_KEY = 'course-toc-collapsed';
-    if (localStorage.getItem(MAP_KEY) === '1') document.body.classList.add('map-collapsed');
-    if (localStorage.getItem(TOC_KEY) === '1') document.body.classList.add('toc-collapsed');
+    const hasToc = !activeRef;
+    if (hasToc) {
+      const groups = [];
+      CHAPTERS.forEach(c => { const g = c.group || '课程'; if (groups.indexOf(g) < 0) groups.push(g); });
+      const cur = CHAPTERS.find(c => c.id === currentId) || {};
+      toc.innerHTML = `<div class="tocinner"><div class="tocbrand">目录</div>` +
+        groups.map(g => {
+          const items = CHAPTERS.filter(c => (c.group || '课程') === g);
+          if (!items.length) return '';
+          const open = g === cur.group ? ' open' : '';
+          return `<details class="tocgroup"${open}><summary>${g}</summary><nav>` +
+            items.map(c => {
+              const cls = c.id === currentId ? 'tocitem cur' : (progress[c.id] ? 'tocitem done' : 'tocitem');
+              return `<a class="${cls}" href="${ROOT}${c.file}">${c.num} ${c.title}</a>`;
+            }).join('') + `</nav></details>`;
+        }).join('') + `</div>`;
+    } else {
+      toc.innerHTML = '';
+    }
 
+    // 一级菜单收起
+    const MAP_KEY = 'course-map-collapsed';
+    if (localStorage.getItem(MAP_KEY) === '1') document.body.classList.add('map-collapsed');
     const mapBtn = document.createElement('button');
     mapBtn.type = 'button';
     mapBtn.className = 'railbtn';
@@ -105,50 +114,44 @@
     };
     navHost.appendChild(mapBtn);
 
-    const tocBtn = document.createElement('button');
-    tocBtn.type = 'button';
-    tocBtn.className = 'railbtn';
-    tocBtn.id = 'tocToggle';
-    tocBtn.onclick = () => {
-      document.body.classList.toggle('toc-collapsed');
-      localStorage.setItem(TOC_KEY, document.body.classList.contains('toc-collapsed') ? '1' : '0');
-      applyMenu();
-    };
-    toc.appendChild(tocBtn);
+    // 二级菜单收起（仅当存在二级菜单）
+    const TOC_KEY = 'course-toc-collapsed';
+    let tocBtn = null;
+    if (hasToc) {
+      if (localStorage.getItem(TOC_KEY) === '1') document.body.classList.add('toc-collapsed');
+      tocBtn = document.createElement('button');
+      tocBtn.type = 'button';
+      tocBtn.className = 'railbtn';
+      tocBtn.id = 'tocToggle';
+      tocBtn.onclick = () => {
+        document.body.classList.toggle('toc-collapsed');
+        localStorage.setItem(TOC_KEY, document.body.classList.contains('toc-collapsed') ? '1' : '0');
+        applyMenu();
+      };
+      toc.appendChild(tocBtn);
+    }
 
     function applyMenu() {
       const wide = window.innerWidth > 900;
       const wideToc = window.innerWidth > 1200;
       const mapOn = wide && document.body.classList.contains('map-collapsed');
-      const tocOn = wideToc && document.body.classList.contains('toc-collapsed');
+      const tocOn = hasToc && wideToc && document.body.classList.contains('toc-collapsed');
       const root = document.documentElement;
       root.style.setProperty('--map-w', !wide ? '0px' : (mapOn ? '28px' : '212px'));
-      root.style.setProperty('--toc-w', !wideToc ? '0px' : (tocOn ? '28px' : '196px'));
+      root.style.setProperty('--toc-w', !hasToc || !wideToc ? '0px' : (tocOn ? '28px' : '196px'));
+      toc.style.display = hasToc ? '' : 'none';
       mapBtn.textContent = mapOn ? '›' : '‹';
-      tocBtn.textContent = tocOn ? '›' : '‹';
       mapBtn.title = mapOn ? '展开课程地图' : '收起课程地图';
-      tocBtn.title = tocOn ? '展开目录' : '收起目录';
       mapBtn.setAttribute('aria-expanded', mapOn ? 'false' : 'true');
-      tocBtn.setAttribute('aria-expanded', tocOn ? 'false' : 'true');
+      if (tocBtn) {
+        tocBtn.textContent = tocOn ? '›' : '‹';
+        tocBtn.title = tocOn ? '展开目录' : '收起目录';
+        tocBtn.setAttribute('aria-expanded', tocOn ? 'false' : 'true');
+        tocBtn.style.display = hasToc ? '' : 'none';
+      }
     }
     applyMenu();
     window.addEventListener('resize', applyMenu);
-    // 鼠标停在章节列表上时，垂直滚轮改为横向滚动
-    const pillsEl = navHost.querySelector('.pills');
-    if (pillsEl) {
-      pillsEl.addEventListener('wheel', e => {
-        if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
-        if (pillsEl.scrollWidth <= pillsEl.clientWidth) return;
-        e.preventDefault();
-        pillsEl.scrollLeft += e.deltaY;
-      }, { passive: false });
-    }
-
-    const btn = document.getElementById('langToggle');
-    if (btn) btn.onclick = () => {
-      localStorage.setItem(KEY_LANG, LANG === 'zh' ? 'en' : 'zh');
-      location.reload();
-    };
   }
 
   const pagerHost = document.getElementById('pager');
