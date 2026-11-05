@@ -1,7 +1,7 @@
 ---
 name: active-recall-drill
 description: Drill recall and build visual courses from notes.
-version: 1.22.0
+version: 1.23.0
 author: cnatom
 license: MIT
 compatibility: Python 3.9+ with the standard library; any agent that can run shell commands.

@@ -88,7 +88,7 @@ def main() -> int:
         return 1
 
     (target / "assets").mkdir(parents=True, exist_ok=True)
-    for name in ("course.css", "course.js", "i18n.js", "notes-data.js"):
+    for name in ("course.css", "course.js", "i18n.js", "notes-data.js", "mapview.js"):
         shutil.copyfile(TEMPLATES / "assets" / name, target / "assets" / name)
     shutil.copyfile(TEMPLATES / "notes.html", target / "notes.html")
 

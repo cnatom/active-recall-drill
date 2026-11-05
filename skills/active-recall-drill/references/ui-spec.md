@@ -74,7 +74,7 @@ The home map lists chapters under their `group` label, in course order, so the m
 
 The earlier spec set no font sizes, so a 1100-unit-wide viewBox squeezed into a 700 px column scaled 11 px labels down to ~7 px and the learner could not read them.
 
-- **Layout decides legibility first**: a diagram with more than ~15 nodes, or any viewBox wider than 900 units, uses `.stage.wide` — the figure spans the full content width and the side table moves below it. Never shrink a wide diagram into the two-column slot. A wide figure uses `.stage.wide`: the figure spans the content width and the points move below it in two columns, while the `.fig` stays `position: sticky` so the diagram remains visible while the reader goes through the points.
+- **Layout decides legibility first**: a diagram with more than ~15 nodes, or any viewBox wider than 900 units, uses `.stage.wide` — the figure spans the full content width and the side table moves below it. Never shrink a wide diagram into the two-column slot. A wide figure uses `.stage.wide`: the SVG goes inside `.mapview`, a fixed-height (560 px) framed canvas that pans by dragging and zooms with the wheel or the `－ / ＋ / 复位` buttons, while the points stay in a 300 px rail beside it.
 - **Minimum SVG font 11.5 units**; node title 14, secondary line 12, annotation/footnote 11.5. Nothing below 11, ever (no 10 px labels).
 - **No dimmed nodes**: step-free pages show everything at full opacity. Point at a region through `data-p` hover highlighting and a light callout, never by fading the rest to grey and never by stamping numbers on the artwork.
 - Effective size is what counts: with the diagram at full width a 900-unit viewBox renders near 1:1, so 12 units ≈ 12 px on screen.

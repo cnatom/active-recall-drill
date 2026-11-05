@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.23.0 — 2026-11-05
+
+- Wide figures render inside a fixed-height `.mapview`: drag to pan, wheel or buttons to zoom, points stay beside it.
+
 ## 1.22.0 — 2026-11-05
 
 - Wide-stage figures stay sticky while the reader scrolls through the two-column points below, so diagram and explanation are visible together.
